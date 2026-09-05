@@ -1,0 +1,106 @@
+#  Levantar:  docker compose up --build
+#  Apagar:    docker compose down
+#  Resetear:  docker compose down -v   (borra la base entera)
+
+services:
+
+  # Base de datos
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: America/Argentina/Buenos_Aires
+      PGTZ: America/Argentina/Buenos_Aires
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Se monta la CARPETA, no un archivo suelto.
+      # Todo .sql que pongas aca se ejecuta en orden alfabetico,
+      # pero SOLO la primera vez (volumen vacio). Si cambias el
+      # schema y no ves los cambios: docker compose down -v
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+
+
+  # Backend - Express + Sequelize
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      TZ: America/Argentina/Buenos_Aires
+      # "db" es el nombre del servicio: adentro de la red de Compose
+      # funciona como hostname. NUNCA pongas localhost aca.
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: http://localhost:${FRONTEND_PORT:-5173}
+      # Mercado Pago (dejalas vacias hasta que las necesites)
+      MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN:-}
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+      - "9229:9229"   # debugger. Ver nota en el README sobre --inspect
+    volumes:
+      - ./backend:/app
+      # UN SOLO montaje para node_modules. Protege la carpeta del
+      # contenedor para que no la pise la de tu Windows/Mac.
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  # Frontend - React + Vite
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      TZ: America/Argentina/Buenos_Aires
+      # En Vite las variables expuestas al browser llevan prefijo VITE_
+      VITE_API_URL: http://localhost:${BACKEND_PORT:-3001}/api
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
+  # Adminer - cliente web para la base
+  # http://localhost:8080  (usuario y pass los del .env)
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: dracula
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  backend_node_modules:
+  frontend_node_modules:

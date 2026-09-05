@@ -1,0 +1,8 @@
+FROM node:22-alpine
+ENV TZ=America/Argentina/Buenos_Aires
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3001 9229
+CMD ["npm", "run", "dev"]
