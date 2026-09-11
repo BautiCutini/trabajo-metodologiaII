@@ -17,10 +17,10 @@ horarios con mayor y menor demanda, facilitando la organización y administraci�
     
 ## Clonar el repositorio
 
-\`\`\`
+```
 git clone https://github.com/BautiCutini/trabajo-metodologiaII.git
 cd trabajo-metodologiaII
-\`\`\`
+```
 
 ## Configuración
 
