@@ -43,3 +43,27 @@ Desde la carpeta raíz del proyecto ejecutar:
 ```
 docker compose up --build
 ```
+
+## Tecnologías utilizadas
+
+**Backend**
+- **Express** — framework minimalista, sin estructura impuesta, lo que permite 
+  organizar el código como el equipo defina, lo venimos utilizando en varias materias
+- **Sequelize (ORM)** — migraciones versionadas para reconstruir el schema desde 
+  cero, y protección contra SQL injection por defecto.
+
+**Base de datos**
+- **PostgreSQL** — relacional, adecuado para el dominio (turnos, usuarios, 
+  canchas con relaciones claras entre sí). Soporta timestamps con zona horaria, 
+  relevante para un sistema de reservas.
+- **Adminer** — cliente web liviano para administrar la base durante el 
+  desarrollo, más rápido de levantar que alternativas como pgAdmin.
+
+**Frontend**
+- **React** — librería más utilizada del mercado y la que mas fresca  y utilizada tenemos de momento.
+- **Vite** — arranque y hot-reload más rápidos que alternativas como Create 
+  React App.
+
+**Infraestructura**
+- **Docker / Docker Compose** — entorno reproducible entre las máquinas del 
+  equipo, sin depender de lo que cada uno tenga instalado localmente.
