@@ -12,13 +12,34 @@ horarios con mayor y menor demanda, facilitando la organización y administraci�
 ## Instrucciones para levantar el proyecto:
 
 ## Requisitos
-    - Tener instalado Docker Desktop.
+    - Tener Docker Desktop instalado y en ejecución.
     - Tener Git instalado.
-    - Tener Docker Desktop ejecutándose.
+    
+## Clonar el repositorio
 
-### Configuración
-    Antes de levantar el proyecto, crear un archivo `.env` en la raíz del proyecto con las variables de entorno necesarias.
+\`\`\`
+git clone https://github.com/BautiCutini/trabajo-metodologiaII.git
+cd trabajo-metodologiaII
+\`\`\`
 
-### Levantar el proyecto
-    Desde la carpeta raíz del proyecto ejecutar:
-        docker compose up --build
+## Configuración
+
+Antes de levantar el proyecto, copiar el archivo de ejemplo y completar los valores:
+
+\`\`\`
+cp .env.example .env
+\`\`\`
+
+Variables obligatorias (sin esto Postgres no levanta):
+- DB_NAME, DB_USER, DB_PASSWORD
+- JWT_SECRET
+
+El resto de las variables (puertos) tiene valores por defecto definidos en el `.env.example`.
+
+## Levantar el proyecto
+
+Desde la carpeta raíz del proyecto ejecutar:
+
+\`\`\`
+docker compose up --build
+\`\`\`
