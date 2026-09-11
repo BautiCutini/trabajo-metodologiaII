@@ -26,9 +26,9 @@ cd trabajo-metodologiaII
 
 Antes de levantar el proyecto, copiar el archivo de ejemplo y completar los valores:
 
-\`\`\`
+```
 cp .env.example .env
-\`\`\`
+```
 
 Variables obligatorias (sin esto Postgres no levanta):
 - DB_NAME, DB_USER, DB_PASSWORD
@@ -40,6 +40,6 @@ El resto de las variables (puertos) tiene valores por defecto definidos en el `.
 
 Desde la carpeta raíz del proyecto ejecutar:
 
-\`\`\`
+```
 docker compose up --build
-\`\`\`
+```
