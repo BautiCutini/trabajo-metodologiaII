@@ -1,4 +1,4 @@
-const {DataTypes} = Require('sequelize');
+const {DataTypes} = require('sequelize');
 const Usuario = (Sequelize) => {
     return Sequelize.define('Usuario', {
         id:{

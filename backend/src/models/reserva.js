@@ -1,4 +1,4 @@
-const {DataTypes} = Require('sequelize');
+const {DataTypes} = require('sequelize');
 const Reserva = (Sequelize) => {
     return Sequelize.define('Reserva', {
         id: {
