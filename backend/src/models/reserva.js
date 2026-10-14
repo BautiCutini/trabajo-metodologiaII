@@ -33,8 +33,13 @@ const Reserva = (Sequelize) => {
             cancha_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false
+            },
+        // Agregué la referencia al horario seleccionado para la reserva.
+        horario_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
             }
-        },
+    },
         {
             tableName: 'reservas',
             timestamps: false
