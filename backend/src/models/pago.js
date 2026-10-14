@@ -25,8 +25,13 @@ const Pago = (Sequelize) => {
         reserva_id: {
             type: DataTypes.INTEGER,
             allowNull: false
+            },
+        // Agregué la URL del comprobante para poder consultar el archivo del pago.
+        comprobante_url: {
+            type: DataTypes.STRING,
+            allowNull: true
             }
-        }, 
+    }, 
         {
             tableName: 'pagos',
             timestamps: false
