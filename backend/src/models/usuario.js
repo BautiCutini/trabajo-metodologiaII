@@ -39,8 +39,19 @@ const Usuario = (Sequelize) => {
         complejo_id: {
             type: DataTypes.INTEGER,
             allowNull: false
-            }
         },
+        // Agregué la URL de la imagen de perfil como un campo opcional.
+        imagen_url: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        // Establecí ACTIVO como estado inicial para los usuarios nuevos.
+        estado: {
+            type: DataTypes.ENUM('ACTIVO', 'INACTIVO'),
+            allowNull: false,
+            defaultValue: 'ACTIVO'
+        }
+    },
         {
             tableName: 'usuarios',
             timestamps: false

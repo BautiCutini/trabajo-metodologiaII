@@ -21,6 +21,17 @@ const Complejo = (Sequelize) => {
         descripcion: {
                 type: DataTypes.STRING,
                 allowNull: false
+            },
+        //Agregué la URL de la imagen del complejo como un campo opcional.
+        imagen_url: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        // Establecí ACTIVO como estado inicial para los complejos nuevos.
+        estado: {
+            type: DataTypes.ENUM('ACTIVO', 'INACTIVO'),
+            allowNull: false,
+            defaultValue: 'ACTIVO'
             }
         }, 
         {
