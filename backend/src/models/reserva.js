@@ -1,62 +1,68 @@
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize');
+
 const Reserva = (Sequelize) => {
     return Sequelize.define('Reserva', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
-            },
-            fecha_turno: {
-                type: DataTypes.DATEONLY,
-                allowNull: false
-            },
-            fecha_reserva: {
-                type: DataTypes.DATE,
-                allowNull: false
-            },
-            hora_inicio: {
-                type: DataTypes.TIME,
-                allowNull: false
-            },
-            hora_fin: {
-                type: DataTypes.TIME,
-                allowNull: false
-            },
-            estado: {
-                type: DataTypes.ENUM('PENDIENTE', 'CONFIRMADA', 'CANCELADA'),
-                allowNull: false
-            },
-            // Agregué el campo usuario_id como opcional para permitir reservas sin un usuario asociado, como pueden ser reservas realizadas por el encargado de un complejo mediante un cliente que le solicitó la reserva por teléfono o por whatsapp.
-            usuario_id: { 
-                type: DataTypes.INTEGER,
-                allowNull: true 
-            },
-            
-            nombre_contacto: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
-            
-            // agregue estos dos campos para poder guardar el nombre y telefono del contacto en caso de que la reserva no tenga un usuario asociado.
-            telefono_contacto: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
-            
-            cancha_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            },
-            
-            // Agregué la referencia al horario seleccionado para la reserva.
-            horario_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
+        },
+        fecha_turno: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+        },
+        fecha_reserva: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        hora_inicio: {
+            type: DataTypes.TIME,
+            allowNull: false
+        },
+        hora_fin: {
+            type: DataTypes.TIME,
+            allowNull: false
+        },
+        estado: {
+            type: DataTypes.ENUM('PENDIENTE', 'CONFIRMADA', 'CANCELADA'),
+            allowNull: false
+        },
+        // Permito reservas sin un usuario registrado.
+        usuario_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        // Datos de contacto para reservas sin usuario asociado.
+        nombre_contacto: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        telefono_contacto: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        cancha_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        // Referencia al horario seleccionado para la reserva.
+        horario_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
+    }, {
+        tableName: 'reservas',
+        timestamps: false,
+        validate: {
+            rangoHorasValido() {
+                if (this.hora_inicio >= this.hora_fin) {
+                    throw new Error(
+                        'La hora de inicio debe ser anterior a la hora de fin'
+                    );
+                }
             }
-        },{
-            tableName: 'reservas',
-            timestamps: false
-        });
-    };
-    
-    module.exports = Reserva;
+        }
+    });
+};
+
+module.exports = Reserva;

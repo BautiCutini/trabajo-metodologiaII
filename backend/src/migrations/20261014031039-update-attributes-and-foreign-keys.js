@@ -90,36 +90,53 @@ module.exports = {
       onDelete: "RESTRICT",
     });
     
-    // =====================================================
-    // 5. PAGOS
-    // =====================================================
-    // Agrego comprobante_url para guardar la referencia
-    // al comprobante del pago.
-    // Permito NULL porque no todos los pagos
-    // necesariamente tendrán un comprobante cargado.
+      // Verifico que el horario pertenezca a la misma cancha.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE reservas
+      ADD CONSTRAINT fk_reservas_horario_cancha
+      FOREIGN KEY (horario_id, cancha_id)
+      REFERENCES horarios (id, cancha_id)
+      ON UPDATE CASCADE
+      ON DELETE RESTRICT;
+      `);
+      
+      // =====================================================
+      // 5. PAGOS
+      // =====================================================
+      // Agrego comprobante_url para guardar la referencia
+      // al comprobante del pago.
+      // Permito NULL porque no todos los pagos
+      // necesariamente tendrán un comprobante cargado.
     await queryInterface.addColumn("pagos", "comprobante_url", {
       type: Sequelize.STRING,
       allowNull: true,
-    });
+      });
   },
-
+  
   async down(queryInterface) {
-
+    
     // Revierto el cambio realizado en pagos.
     await queryInterface.removeColumn("pagos", "comprobante_url");
-
+    
+    
+    //Elimino primero la clave foránea compuesta.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE reservas
+      DROP CONSTRAINT IF EXISTS fk_reservas_horario_cancha;
+    `);
+    
     // Bajo la clave foránea de reservas junto con
     // su columna horario_id.
     await queryInterface.removeColumn("reservas", "horario_id");
-
+    
     // Revierto las columnas agregadas a canchas.
     await queryInterface.removeColumn("canchas", "estado");
     await queryInterface.removeColumn("canchas", "imagen_url");
-
+    
     // Revierto las columnas agregadas a complejos.
     await queryInterface.removeColumn("complejos", "estado");
     await queryInterface.removeColumn("complejos", "imagen_url");
-
+    
     // Revierto las columnas agregadas a usuarios.
     await queryInterface.removeColumn("usuarios", "estado");
     await queryInterface.removeColumn("usuarios", "imagen_url");

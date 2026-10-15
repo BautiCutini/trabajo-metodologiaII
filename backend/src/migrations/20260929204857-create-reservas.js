@@ -56,6 +56,14 @@ module.exports = {
         allowNull: false
       },
     });
+    
+    // Agrego una restricción que permite que postgreSQL pueda verificar que la hora de inicio sea menor a la hora de fin.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE reservas
+      ADD CONSTRAINT check_reservas_rango_horas
+      CHECK (hora_inicio < hora_fin);
+    `);
+    
   },
   
   async down (queryInterface, Sequelize) {

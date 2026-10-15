@@ -46,6 +46,19 @@ module.exports = {
       CHECK (dia_semana BETWEEN 0 AND 6);
       `);
       
+      //Agrego una restriccion que permite que postgreSQL pueda verificar esa combinacion cuando creemos la clave foreana compuesta.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE horarios
+      ADD CONSTRAINT unique_horarios_id_cancha
+      UNIQUE (id, cancha_id);
+      `);
+      
+      //Agrego una restriccion que permite que postgreSQL pueda verificar que la hora de inicio sea menor a la hora de fin.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE horarios
+      ADD CONSTRAINT check_horarios_rango_horas
+      CHECK (hora_inicio < hora_fin);
+      `);
       
   },
   async down(queryInterface, Sequelize) {
