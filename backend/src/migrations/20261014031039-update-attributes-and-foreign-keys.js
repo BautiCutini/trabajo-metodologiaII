@@ -70,7 +70,7 @@ module.exports = {
     
     await queryInterface.addColumn("reservas", "horario_id", {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      allowNull: false,
       
       // Defino la clave foránea:
       // horario_id referencia a horarios.id.
