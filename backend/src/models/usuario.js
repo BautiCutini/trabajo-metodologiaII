@@ -36,9 +36,10 @@ const Usuario = (Sequelize) => {
             ),
             allowNull: false
         },
+        // Agregué el campo complejo_id como opcional para los usuarios que no estén asociados a un complejo. como puededen ser los jugadores o los administradores de plataforma.
         complejo_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         // Agregué la URL de la imagen de perfil como un campo opcional.
         imagen_url: {
