@@ -15,6 +15,17 @@ module.exports = {
         allowNull: true
       },
       
+      // agregue estos dos campos para poder guardar el nombre y telefono del contacto en caso de que la reserva no tenga un usuario asociado.
+      nombre_contacto: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      
+      telefono_contacto: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      
       cancha_id: {
         type: Sequelize.INTEGER,
         allowNull: false

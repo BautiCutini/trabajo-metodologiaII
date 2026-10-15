@@ -31,16 +31,29 @@ const Reserva = (Sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: true 
             },
+            
+            nombre_contacto: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            
+            // agregue estos dos campos para poder guardar el nombre y telefono del contacto en caso de que la reserva no tenga un usuario asociado.
+            telefono_contacto: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            
             cancha_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-        // Agregué la referencia al horario seleccionado para la reserva.
-        horario_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        }
-    },{
+            
+            // Agregué la referencia al horario seleccionado para la reserva.
+            horario_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            }
+        },{
             tableName: 'reservas',
             timestamps: false
         });
