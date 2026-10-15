@@ -26,9 +26,10 @@ const Reserva = (Sequelize) => {
                 type: DataTypes.ENUM('PENDIENTE', 'CONFIRMADA', 'CANCELADA'),
                 allowNull: false
             },
+            // Agregué el campo usuario_id como opcional para permitir reservas sin un usuario asociado, como pueden ser reservas realizadas por el encargado de un complejo mediante un cliente que le solicitó la reserva por teléfono o por whatsapp.
             usuario_id: { 
                 type: DataTypes.INTEGER,
-                allowNull: false
+                allowNull: true 
             },
             cancha_id: {
                 type: DataTypes.INTEGER,
