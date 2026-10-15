@@ -93,7 +93,15 @@ El modelo ya declara el mismo rango con `validate: { min: 0, max: 6 }`. La dupli
 - Las consultas que necesiten cancha y horarios juntos requieren `include`, con el costo de join correspondiente.
 - La migración es reversible en estructura pero no en datos: el `down` restituye la columna vacía.
 
-**Lo que esta decisión habilita y todavía no se implementó.** Con los horarios como filas, la restricción que impide vender dos veces el mismo turno puede expresarse como `EXCLUDE USING gist` sobre `reservas`, comparando `cancha_id` y el rango horario. Queda registrado como pendiente en la sección final: la decisión de modelado abre esa puerta, pero la garantía todavía no está escrita.
+**Lo que esta decisión habilitó y ya se implementó.** Con los horarios como filas, se incorporó una restricción de exclusión a nivel de PostgreSQL que impide registrar reservas superpuestas para una misma cancha.
+
+La migración `202610151214343-prevent-overlapping-reservas.js` habilita la extensión `btree_gist` y agrega la restricción `reservas_no_superpuestas`, que compara `cancha_id` por igualdad y el intervalo temporal de la reserva por solapamiento. Las reservas canceladas quedan excluidas de esta restricción, por lo que no bloquean la disponibilidad.
+
+Además, se incorporaron restricciones para garantizar que la hora de inicio sea anterior a la hora de fin y que el horario seleccionado pertenezca a la misma cancha indicada en la reserva.
+
+**Verificación.** En la base aislada `reservas_test` se comprobó que una reserva válida se acepta, que una segunda reserva superpuesta es rechazada y que dos reservas consecutivas —por ejemplo, de 18:00 a 19:00 y de 19:00 a 20:00— pueden coexistir.
+
+De esta manera, la decisión de modelado no solo habilitó la restricción: la garantía de no solapamiento ya está implementada y fue verificada directamente en PostgreSQL.
 
 ---
 
@@ -207,54 +215,80 @@ Se reconoce la limitación: la verificación manual no es repetible sin interven
 
 ---
 
-## Hallazgos abiertos
+## Estado de los hallazgos de diseño
 
-Detectados durante el mismo análisis. Se documentan con su criterio de mejora.
+Los hallazgos identificados durante el análisis se clasifican según su estado actual. Los puntos corregidos se mantienen documentados como evidencia de las decisiones tomadas; los pendientes conservan su criterio de mejora.
 
-### Divergencia entre migración y modelo en `complejo_id`
+### Restricciones de integridad de horarios y reservas — Corregido
 
-`backend/src/migrations/20260929220942-add-relaciones.js:7` declara la columna `allowNull: true`. `backend/src/models/usuario.js:41` la declara `allowNull: false`.
+Se incorporaron restricciones a nivel de PostgreSQL para evitar inconsistencias en horarios y reservas.
 
-La base acepta nulos, pero Sequelize valida antes de emitir el `INSERT`, de modo que es imposible registrar un usuario con rol `JUGADOR`, que por definición no pertenece a ningún complejo.
+- `check_horarios_dia_semana`: limita los días de la semana al rango de 0 a 6.
+- `check_horarios_rango_horas`: exige que la hora de inicio sea anterior a la hora de fin.
+- `check_reservas_rango_horas`: aplica la misma regla a las reservas.
+- `unique_horarios_id_cancha` y `fk_reservas_horario_cancha`: garantizan que la cancha asociada a una reserva coincida con la cancha propietaria del horario seleccionado.
+- `reservas_no_superpuestas`: impide intervalos superpuestos en una misma cancha, excluyendo las reservas canceladas.
 
-Es una manifestación concreta de la **duplicación** estructural entre `migrations/` y `models/`: cada campo está definido dos veces y un cambio puede aplicarse en una sola. La duplicación en sí es inherente al diseño de Sequelize —las migraciones gobiernan la evolución del esquema y los modelos la representación en memoria— y unificarlas exigiría usar `sync()`, desaconsejado fuera de desarrollo. La mitigación es disciplina de revisión, no refactor.
+La restricción de exclusión utiliza la extensión PostgreSQL `btree_gist` y un rango temporal semiabierto `[)`. Por ello, dos reservas consecutivas pueden compartir el límite entre el final de una y el comienzo de la siguiente.
 
-**Criterio de mejora:** corregir el modelo a `allowNull: true` antes de implementar el registro de usuarios. Si se quiere expresar que un `ENCARGADO` o un `ADMIN_COMPLEJO` sí debe tener complejo, corresponde una validación a nivel de modelo, no el `allowNull` de la columna.
+**Evidencia:**
+- `backend/src/migrations/20261014002336-create-horarios.js`
+- `backend/src/migrations/20260929204857-create-reservas.js`
+- `backend/src/migrations/202610151214343-prevent-overlapping-reservas.js`
 
-### Restricción de no solapamiento de reservas
+**Verificación:** las migraciones se ejecutaron en la base aislada `reservas_test`. Se comprobó que una reserva válida se acepta, una reserva superpuesta se rechaza y dos turnos consecutivos se aceptan. Los datos auxiliares se revirtieron después de las pruebas.
 
-La extracción de los horarios habilitó expresarla, pero todavía no está escrita. Sin ella, dos reservas simultáneas sobre la misma cancha y el mismo horario pueden guardarse ambas.
+### Divergencia entre migración y modelo en `complejo_id` — Corregido
 
-**Criterio de mejora:** una migración que agregue `EXCLUDE USING gist` sobre `reservas`, comparando `cancha_id` por igualdad y el rango horario por solapamiento, excluyendo las reservas canceladas. Requiere la extensión `btree_gist`.
+La migración `backend/src/migrations/20260929220942-add-relaciones.js` permite que `usuarios.complejo_id` sea nulo. El modelo `backend/src/models/usuario.js` se ajustó para declarar también `allowNull: true`.
 
-### `usuario_id` obligatorio en reservas
+Esto permite representar usuarios que no pertenecen a un complejo, como los jugadores registrados en el sistema.
 
-`backend/src/models/reserva.js:29-32` declara `usuario_id` como `allowNull: false`.
+La regla de que ciertos roles, como `ENCARGADO` o `ADMIN_COMPLEJO`, deban tener un complejo asociado requiere una validación adicional de negocio. La nulabilidad de la columna no expresa esa condición por sí sola.
 
-Esto contradice un requerimiento de la propuesta técnica entregada, donde el perfil *Encargado del complejo* debe poder cargar reservas tomadas por WhatsApp, teléfono o mostrador. Esas personas no tienen cuenta en el sistema.
+**Criterio pendiente:** incorporar la validación de pertenencia según el rol cuando se implemente o revise el registro de usuarios.
 
-El hallazgo no surge de leer el código aislado sino de confrontarlo contra el requerimiento.
+### Reservas sin usuario registrado — Parcialmente corregido
 
-**Criterio de mejora:** admitir nulos y agregar campos de contacto, con una validación a nivel de modelo que exija usuario registrado o datos de contacto.
+Se modificó el modelo `backend/src/models/reserva.js` y la migración `backend/src/migrations/20260929204857-create-reservas.js` para permitir `usuario_id` nulo.
 
-### Dependencia concreta de la conexión (DIP)
+También se agregaron los campos opcionales `nombre_contacto` y `telefono_contacto`, que permiten guardar información de contacto para reservas tomadas por teléfono, WhatsApp o mostrador.
 
-`backend/src/models/index.js:3` importa directamente la instancia de `config/database.js`, que es un **Singleton** —una única instancia de Sequelize, garantizada por el cacheo de módulos de Node—. Los modelos dependen de una conexión concreta y no de una abstracción inyectada, lo que impide probarlos contra otra base o contra un doble de prueba.
+Esto resuelve la incompatibilidad estructural que impedía registrar reservas sin una cuenta de usuario.
 
-La tensión es real: el **Principio de Inversión de Dependencias** tiene sentido cuando desacoplar reduce el costo de cambio o facilita el testing, y acá facilitaría el testing. El Singleton está justificado en sí mismo —el pool de conexiones debe ser único, y múltiples instancias agotarían las conexiones del servidor— pero su costo característico es precisamente esta dependencia global difícil de reemplazar.
+**Criterio pendiente:** incorporar una validación de negocio que exija un usuario registrado o, cuando no exista, los datos de contacto necesarios. La nulabilidad de `usuario_id` y de los campos de contacto no garantiza por sí sola que se informe alguno de ellos.
 
-**Criterio de mejora:** no se resolvió porque todavía no hay suite de pruebas. Introducir inyección de dependencias sin pruebas que la aprovechen sería abstracción sin necesidad. Corresponde revisarlo junto con la incorporación de los primeros tests.
+### Dependencia concreta de la conexión (DIP) — Pendiente
 
-### Hasheo de contraseñas sin implementar
+`backend/src/models/index.js` importa directamente la instancia de `backend/src/config/database.js`. Los modelos dependen de una conexión concreta y no de una abstracción inyectada, lo que dificulta probarlos contra otra base o contra un doble de prueba.
 
-`bcryptjs` figura en las dependencias pero el hasheo todavía no está escrito.
+El Singleton está justificado porque el pool de conexiones debe compartirse, pero su costo característico es la dependencia global difícil de reemplazar.
 
-**Criterio de mejora:** implementarlo como hook `beforeSave` en `models/usuario.js`, con la guarda `if (usuario.changed('password'))`, y no en el controlador de registro. Si viviera en el controlador, al implementar el cambio de contraseña, los seeds y el alta de encargados existiría la misma llamada en cuatro archivos, y modificar el costo del hash obligaría a tocar los cuatro: el smell de **Shotgun Surgery**. En el hook, el modelo garantiza su propia invariante y es imposible que una contraseña se almacene sin hashear.
+**Criterio de mejora:** revisar la inyección de dependencias junto con la incorporación de pruebas automatizadas, para que la abstracción responda a una necesidad real de testing.
 
-Corresponde acompañarlo de `defaultScope` con `attributes: { exclude: ['password'] }`, de modo que el caso seguro sea el comportamiento por defecto y el acceso al hash requiera pedirlo explícitamente.
+### Hasheo de contraseñas — Pendiente
 
-### Reimplementación de timestamps
+`bcryptjs` figura en las dependencias, pero el hasheo de contraseñas todavía debe implementarse.
 
-Los seis modelos declaran `timestamps: false`, y `models/reserva.js` incorpora `fecha_reserva` para registrar manualmente el momento de creación. Se reimplementa a mano una funcionalidad del framework, con menos información: no queda registro de modificaciones, dato necesario para auditar cancelaciones y reprogramaciones.
+**Criterio de mejora:** centralizar el hasheo en un hook `beforeSave` de `backend/src/models/usuario.js`, con la guarda `if (usuario.changed('password'))`. Acompañarlo de un `defaultScope` que excluya `password` de las consultas habituales, de modo que el acceso al hash deba solicitarse explícitamente.
 
-**Criterio de mejora:** evaluarlo al implementar el módulo de reportes, que es donde esa información se vuelve necesaria.
+### Reimplementación de timestamps — Pendiente
+
+Los modelos declaran `timestamps: false`, y `backend/src/models/reserva.js` incorpora `fecha_reserva` para registrar manualmente el momento de creación. Esto no registra automáticamente las modificaciones de un registro.
+
+**Criterio de mejora:** evaluar la incorporación de fechas de creación y actualización cuando se implemente el módulo de reportes y se definan los requisitos de auditoría para cancelaciones y reprogramaciones.
+
+### Pruebas automatizadas de los middlewares — Pendiente
+
+El proyecto declara `jest` y `supertest` como dependencias de desarrollo, pero todavía no se dispone de una suite de pruebas automatizadas para los middlewares de autenticación y autorización.
+
+**Criterio de mejora:** automatizar los casos de token ausente, token mal formado, token válido con rol permitido y token válido con rol no permitido. Estos componentes son candidatos adecuados para comenzar porque no necesitan una base de datos para verificar su comportamiento.
+
+### Criterios de diseño aplicados a la integridad de horarios y reservas
+Las restricciones incorporadas en horarios y reservas se fundamentan en el principio de mantener los invariantes del sistema en la capa que puede garantizarlos de manera consistente.
+
+La validación en los modelos de Sequelize permite detectar errores y ofrecer respuestas útiles a la aplicación. Las restricciones CHECK, las claves foráneas y la restricción de exclusión de PostgreSQL complementan esa validación al impedir que se persistan datos inconsistentes, incluso cuando la escritura no pasa por los controladores de la aplicación.
+
+La restricción reservas_no_superpuestas resuelve específicamente el problema de concurrencia: la base de datos verifica el solapamiento al insertar o modificar una reserva, evitando que dos operaciones simultáneas registren turnos incompatibles para una misma cancha. El uso de intervalos semiabiertos permite, además, que dos turnos consecutivos coexistan.
+
+Estas decisiones no corresponden a patrones GoF específicos, sino a criterios de diseño, integridad referencial y responsabilidad de la capa de persistencia. Su justificación sigue el enfoque de la materia: identificar una tensión de diseño, evaluar alternativas, tomar una decisión y explicitar sus beneficios y costos.
