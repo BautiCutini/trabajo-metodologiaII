@@ -11,7 +11,7 @@ const Horario = (Sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        // Establecí un rango de 0 a 6 para representar los días de la semana.
+        //* Establecí un rango de 0 a 6 para representar los días de la semana.
         dia_semana: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -28,7 +28,7 @@ const Horario = (Sequelize) => {
             type: DataTypes.TIME,
             allowNull: false
         },
-        // Permito habilitar o deshabilitar un horario sin eliminarlo de la base de datos.
+        //* Permito habilitar o deshabilitar un horario sin eliminarlo de la base de datos.
         estado: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -36,7 +36,16 @@ const Horario = (Sequelize) => {
         }
     }, {
         tableName: 'horarios',
-        timestamps: false
+        timestamps: false,
+        validate: {
+            rangoHorasValido() {
+                if (this.hora_inicio >= this.hora_fin) {
+                    throw new Error(
+                        'La hora de inicio debe ser anterior a la hora de fin'
+                    );
+                }
+            }
+        }
     });
 };
 
