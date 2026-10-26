@@ -43,6 +43,13 @@ Desde la carpeta raíz del proyecto ejecutar:
 ```
 docker compose up --build
 ```
+# Crear las tablas
+
+La primera vez, y cada vez que se agreguen migraciones nuevas:
+
+```
+docker compose exec backend npx sequelize-cli db:migrate
+```
 
 ## Tecnologías utilizadas
 
