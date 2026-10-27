@@ -9,9 +9,21 @@ module.exports = {
         autoIncrement: true
       },
       
+      // Agregué el campo usuario_id como opcional para permitir reservas sin un usuario asociado, como pueden ser reservas realizadas por el encargado de un complejo mediante un cliente que le solicitó la reserva por teléfono o por whatsapp.
       usuario_id: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
+      },
+      
+      // agregue estos dos campos para poder guardar el nombre y telefono del contacto en caso de que la reserva no tenga un usuario asociado.
+      nombre_contacto: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      
+      telefono_contacto: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       
       cancha_id: {
@@ -44,6 +56,14 @@ module.exports = {
         allowNull: false
       },
     });
+    
+    // Agrego una restricción que permite que postgreSQL pueda verificar que la hora de inicio sea menor a la hora de fin.
+    await queryInterface.sequelize.query(`
+      ALTER TABLE reservas
+      ADD CONSTRAINT check_reservas_rango_horas
+      CHECK (hora_inicio < hora_fin);
+    `);
+    
   },
   
   async down (queryInterface, Sequelize) {
