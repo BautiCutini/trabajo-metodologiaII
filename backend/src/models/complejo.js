@@ -36,7 +36,8 @@ const Complejo = (Sequelize) => {
         }, 
         {
             tableName: 'complejos',
-            timestamps: false
+            timestamps: false,
+            underscored: true
         });
     };
     
