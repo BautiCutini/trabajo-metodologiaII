@@ -37,6 +37,7 @@ const Horario = (Sequelize) => {
     }, {
         tableName: 'horarios',
         timestamps: false,
+        underscored: true,
         validate: {
             rangoHorasValido() {
                 if (this.hora_inicio >= this.hora_fin) {
