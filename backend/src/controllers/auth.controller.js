@@ -1,20 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models');
-
-// Arma la versión del usuario que se puede devolver al cliente: sin contraseña.
-function usuarioPublico(usuario) {
-    return {
-        id: usuario.id,
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        telefono: usuario.telefono,
-        rol: usuario.rol,
-        complejo_id: usuario.complejo_id,
-        imagen_url: usuario.imagen_url,
-        estado: usuario.estado
-    };
-}
+const  usuarioPublico  = require('../utils/usuarioPublico');
 
 async function registro(req, res) {
     try {
