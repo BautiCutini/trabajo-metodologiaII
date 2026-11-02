@@ -50,6 +50,26 @@ La primera vez, y cada vez que se agreguen migraciones nuevas:
 ```
 docker compose exec backend npx sequelize-cli db:migrate
 ```
+## Cargar datos de prueba
+
+Definir `ADMIN_PASSWORD` en el `.env` y ejecutar:
+
+    docker compose exec backend npx sequelize-cli db:seed:all
+
+Para recargar los datos, no usar `db:seed:undo:all`: los ids no vuelven a 1
+y los seeders fallan. Vaciar las tablas desde Adminer con:
+
+    TRUNCATE complejos, usuarios, canchas, horarios, reservas, pagos RESTART IDENTITY CASCADE;
+
+## Empezar con una base limpia
+
+    docker compose down -v
+    docker compose up -d --build
+    docker compose exec backend npx sequelize-cli db:migrate
+    docker compose exec backend npx sequelize-cli db:seed:all
+
+El `--build` es necesario: `down -v` también borra las dependencias instaladas.
+
 
 ## Tecnologías utilizadas
 
