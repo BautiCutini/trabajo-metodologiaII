@@ -45,7 +45,7 @@ module.exports = {
         password: passwordHash,
         telefono: '2900000002',
         rol: 'ENCARGADO',
-        complejo_id: null,
+        complejo_id: 1,
         imagen_url: null,
         estado: 'ACTIVO'
       },
@@ -56,7 +56,7 @@ module.exports = {
         password: passwordHash,
         telefono: '2900000003',
         rol: 'ADMIN_COMPLEJO',
-        complejo_id: null,
+        complejo_id: 1,
         imagen_url: null,
         estado: 'ACTIVO'
       }
