@@ -6,6 +6,7 @@ const { sequelize } = require('./models');
 const authRoutes = require('./routes/auth.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
 const complejosRoutes = require('./routes/complejos.routes');
+const canchasRoutes = require('./routes/canchas.routes');
 
 const app = express();
 
@@ -21,5 +22,6 @@ sequelize.authenticate()
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/usuarios', usuariosRoutes);
 app.use('/api/v1/complejos', complejosRoutes);
+app.use('/api/v1/canchas', canchasRoutes);
 
 app.listen(3001, '0.0.0.0', () => console.log('API en 3001'));
