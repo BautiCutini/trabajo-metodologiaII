@@ -3,14 +3,9 @@ const { listar, obtener, crear, actualizar, eliminar } = require('../controllers
 const autenticar = require('../middlewares/autenticar');
 const autorizar = require('../middlewares/autorizar');
 const verificarPertenencia = require('../middlewares/verificarPertenencia');
+const { complejoDeLaRuta } = require('../utils/resolvedoresComplejo');
 
 const router = Router();
-
-// en estas rutas, el complejo es directamente el id de la URL
-const complejoDeLaRuta = (req) => {
-    const id = parseInt(req.params.id);
-    return Number.isNaN(id) ? null : id;
-};
 
 router.get('/', listar);
 router.get('/:id', obtener);
