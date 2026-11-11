@@ -1,4 +1,4 @@
-const { Pago, Reserva, Cancha } = require('../models');
+const { Pago, Reserva, Cancha, sequelize } = require('../models');
 const { leerPaginacion, respuestaPaginada } = require('../utils/paginacion');
 
 const CAMPOS_ORDENABLES = ['id', 'fecha', 'monto', 'estado'];
@@ -21,6 +21,10 @@ function puedeAccederAReserva(usuario, reserva) {
         return reserva.usuario_id === usuario.id;
     }
     return reserva.Cancha.complejo_id === usuario.complejo_id;
+}
+
+function esPersonal(usuario) {
+    return usuario.rol !== 'JUGADOR';
 }
 
 function errorMonto(monto) {
@@ -174,4 +178,72 @@ async function crear (req, res) {
     }
 }
 
-module.exports = { listar, obtener };
+async function actualizar(req, res) {
+    try {
+        const id = parseInt(req.params.id);
+        if (Number.isNaN(id)) {
+            return res.status(400).json({ error: 'El id tiene que  ser numérico' });
+        }
+
+        const pago = await Pago.findByPk(id, { include: [INCLUDE_RESERVA] });
+        if (!pago) {
+            return res.status(404).json({ error: 'Pago no encontrado' });
+        }
+        if (!puedeAccederAReserva(req.usuario, pago.Reserva)) {
+            return res.status(403).json({ error: 'No tenés permiso sobre este pago' });
+        }
+
+        const { estado, comprobante_url } = req.body;
+        if (estado === undefined && comprobante_url === undefined) {
+            return res.status(400).json({ error: 'No se enviaron campos para actualizar (estado, comprobante_url)' });
+        }
+
+        const cambios = {};
+
+        if (estado !== undefined) {
+            const nuevoEstado = String(estado).toUpperCase();
+            if (!ESTADOS.includes(nuevoEstado)) {
+                return res.status(400).json({ error: `Estado inválido. Valores posibles: ${ESTADOS.join(', ')}` });
+            }
+            if (!esPersonal(req.usuario)) {
+                return res.status(403).json({ error: 'Solo el personal del complejo puede confirmar o rechazar pagos' });
+            }
+            if (nuevoEstado !== pago.estado) {
+                if (pago.estado !== 'PENDIENTE' || nuevoEstado === 'PENDIENTE') {
+                    return res.status(409).json({ error: 'Solo un pago pendiente puede pasar a confirmado o rechazado' });
+                }
+                cambios.estado = nuevoEstado;
+            }
+        }
+
+        if (comprobante_url !== undefined) {
+            if (errorComprobante(comprobante_url)) {
+                return res.status(400).json({ error: errorComprobante(comprobante_url) });
+            }
+            if (pago.estado !== 'PENDIENTE') {
+                return res.status(409).json({ error: 'El comprobante solo se puede modificar mientras el pago está pendiente' });
+            }
+            cambios.comprobante_url = comprobante_url;
+        }
+
+      
+        await sequelize.transaction(async (transaction) => {
+            pago.set(cambios);
+            await pago.save({ transaction });
+
+            if (cambios.estado === 'CONFIRMADO' && pago.Reserva.estado === 'PENDIENTE') {
+                await pago.Reserva.update({ estado: 'CONFIRMADA' }, { transaction });
+            }
+        });
+
+        return res.json(pago);
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: error.errors.map(e => e.message) });
+        }
+        console.error(error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+}
+
+module.exports = { listar, obtener, crear, actualizar };
