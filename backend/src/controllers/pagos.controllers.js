@@ -4,7 +4,7 @@ const { leerPaginacion, respuestaPaginada } = require('../utils/paginacion');
 const CAMPOS_ORDENABLES = ['id', 'fecha', 'monto', 'estado'];
 const METODOS = ['MERCADOPAGO', 'TRANSFERENCIA'];
 const ESTADOS = ['PENDIENTE', 'CONFIRMADO', 'RECHAZADO'];
-
+const MONTO_MAXIMO = 99999999.99; 
 
 const INCLUDE_RESERVA = {
     model: Reserva,
@@ -21,6 +21,21 @@ function puedeAccederAReserva(usuario, reserva) {
         return reserva.usuario_id === usuario.id;
     }
     return reserva.Cancha.complejo_id === usuario.complejo_id;
+}
+
+function errorMonto(monto) {
+    const numero = Number(monto);
+    if (monto === '' || monto === null || Number.isNaN(numero) || numero <= 0 || numero > MONTO_MAXIMO) {
+        return 'El monto debe ser un número mayor a cero';
+    }
+    return null;
+}
+
+function errorComprobante(url) {
+    if (url !== null && (typeof url !== 'string' || url.trim() === '' || url.length > 255)) {
+        return 'comprobante_url debe ser un texto de hasta 255 caracteres';
+    }
+    return null;
 }
 
 async function listar(req, res) {
@@ -95,6 +110,65 @@ async function obtener(req, res) {
 
         return res.json(pago);
     } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+}
+
+async function crear (req, res) {
+    try {
+        const reserva_id = parseInt(req.body.reserva_id);
+        const { monto, comprobante_url } = req.body;
+        const metodo_pago = req.body.metodo_pago !== undefined ? String(req.body.metodo_pago).toUpperCase() : undefined;
+
+        if (Number.isNaN(reserva_id) || monto === undefined || !metodo_pago) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios: reserva_id, monto y metodo_pago' });
+        }
+        if (errorMonto(monto)) {
+            return res.status(400).json({ error: errorMonto(monto) });
+        }
+        if (!METODOS.includes(metodo_pago)) {
+            return res.status(400).json({ error: `Método de pago inválido. Valores posibles: ${METODOS.join(', ')}` });
+        }
+        if (comprobante_url !== undefined && errorComprobante(comprobante_url)) {
+            return res.status(400).json({ error: errorComprobante(comprobante_url) });
+        }
+
+        const reserva = await Reserva.findByPk(reserva_id, {
+            include: [{ model: Cancha, attributes: ['id', 'complejo_id'] }]
+        });
+        if (!reserva) {
+            return res.status(400).json({ error: 'La reserva indicada no existe' });
+        }
+        if (!puedeAccederAReserva(req.usuario, reserva)) {
+            return res.status(403).json({ error: 'No tenés permiso sobre esta reserva' });
+        }
+        if (reserva.estado === 'CANCELADA') {
+            return res.status(409).json({ error: 'No se puede registrar un pago para una reserva cancelada' });
+        }
+
+        
+        const vigentes = await Pago.count({
+            where: { reserva_id, estado: ['PENDIENTE', 'CONFIRMADO'] }
+        });
+        if (vigentes > 0) {
+            return res.status(409).json({ error: 'La reserva ya tiene un pago pendiente o confirmado' });
+        }
+
+        const pago = await Pago.create({
+            reserva_id,
+            monto: Number(monto),
+            fecha: new Date(),
+            metodo_pago,
+            estado: 'PENDIENTE',
+            comprobante_url: comprobante_url ?? null
+        });
+
+        return res.status(201).json(pago);
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: error.errors.map(e => e.message) });
+        }
         console.error(error);
         return res.status(500).json({ error: 'Error interno del servidor' });
     }
