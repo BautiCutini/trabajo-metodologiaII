@@ -8,6 +8,7 @@ const usuariosRoutes = require('./routes/usuarios.routes');
 const complejosRoutes = require('./routes/complejos.routes');
 const canchasRoutes = require('./routes/canchas.routes');
 const horariosRoutes = require('./routes/horarios.routes');
+const pagosRoutes = require('./routes/pagos.routes');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/api/v1/usuarios', usuariosRoutes);
 app.use('/api/v1/complejos', complejosRoutes);
 app.use('/api/v1/canchas', canchasRoutes);
 app.use('/api/v1/horarios', horariosRoutes);
+app.use('/api/v1/pagos', pagosRoutes);
 
 async function iniciarServidor() {
     try {
