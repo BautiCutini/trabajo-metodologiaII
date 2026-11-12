@@ -1,0 +1,25 @@
+:root {
+/* Colores principales */
+    --color-primary: #142D25;
+    --color-secondary: #B9E769;
+    --color-tertiary: #26734D;
+
+/* Fondos */
+    --color-bg: #FFFFFF;
+    --color-surface: #F5F7F3;
+    --color-surface-alt: #EDF1EA;
+
+/* Textos */
+    --color-text: #26332B;
+    --color-text-muted: #68736B;
+    --color-text-disabled: #A0A9A1;
+
+/* Bordes e interacciones */
+    --color-border: #DCE3DB;
+    --color-hover: #E8F0E2;
+
+/* Estados */
+    --color-success: #26734D;
+    --color-warning: #E9B949;
+    --color-danger: #DC4545;
+}
