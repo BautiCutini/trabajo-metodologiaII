@@ -1,25 +1,129 @@
 :root {
-/* Colores principales */
+    /* ========================================
+    COLORES PRINCIPALES - PICADO
+    ======================================== */
+    
     --color-primary: #142D25;
     --color-secondary: #B9E769;
     --color-tertiary: #26734D;
-
-/* Fondos */
-    --color-bg: #FFFFFF;
-    --color-surface: #F5F7F3;
-    --color-surface-alt: #EDF1EA;
-
-/* Textos */
-    --color-text: #26332B;
-    --color-text-muted: #68736B;
-    --color-text-disabled: #A0A9A1;
-
-/* Bordes e interacciones */
-    --color-border: #DCE3DB;
-    --color-hover: #E8F0E2;
-
-/* Estados */
+    
+    /* Fondos oscuros */
+    
+    --color-bg: #142D25;
+    --color-bg-dark: #0B1712;
+    --color-surface: #19392E;
+    --color-surface-alt: #204735;
+    --color-surface-glass: rgba(25, 57, 46, 0.75);
+    
+    /* Fondos claros */
+    
+    --color-bg-light: #FFFFFF;
+    --color-surface-light: #F5F7F3;
+    --color-surface-light-alt: #EDF1EA;
+    
+    /* Textos */
+    
+    --color-text: #FFFFFF;
+    --color-text-muted: #B8C8BE;
+    --color-text-disabled: #829187;
+    --color-text-dark: #26332B;
+    
+    /* Bordes e interacciones */
+    
+    --color-border: #26734D;
+    --color-border-subtle: rgba(185, 231, 105, 0.18);
+    --color-hover: rgba(185, 231, 105, 0.12);
+    --color-focus: #B9E769;
+    
+    /* Estados */
+    
     --color-success: #26734D;
     --color-warning: #E9B949;
     --color-danger: #DC4545;
+    
+    --color-available: #26734D;
+    --color-unavailable: #DC4545;
+    
+    /* ========================================
+    TIPOGRAFÍA - INTER
+    ======================================== */
+    
+    --font-primary: 'Inter', sans-serif;
+    
+    --font-regular: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+    
+    /* Tamaños */
+    
+    --font-size-xs: 0.8125rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 2.5rem;
+    
+    /* ========================================
+    BORDES Y RADIOS
+    ======================================== */
+    
+    --border-width: 1px;
+    
+    --radius-sm: 8px;
+    --radius-input: 10px;
+    --radius-button: 12px;
+    --radius-card: 18px;
+    --radius-panel: 24px;
+    --radius-full: 9999px;
+    
+    /* ========================================
+    ESPACIADOS
+    ======================================== */
+    
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    
+    /* ========================================
+    SOMBRAS E ILUMINACIÓN
+    ======================================== */
+    
+        --shadow-sm:
+            0 2px 8px rgba(0, 0, 0, 0.20);
+        
+        --shadow-card:
+            0 8px 24px rgba(0, 0, 0, 0.25);
+        
+        --shadow-panel:
+            0 12px 32px rgba(0, 0, 0, 0.30);
+        
+        --glow-green:
+            0 0 15px rgba(38, 115, 77, 0.35);
+        
+        --glow-lime:
+            0 0 18px rgba(185, 231, 105, 0.30);
+    
+    /* ========================================
+    TRANSICIONES Y ANIMACIONES
+    ======================================== */
+    
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 400ms ease;
+    
+    /* ========================================
+    CAPAS
+    ======================================== */
+    
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-overlay: 50;
+    --z-modal: 100;
+    --z-toast: 200;
 }
