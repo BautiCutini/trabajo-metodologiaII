@@ -226,7 +226,7 @@ async function actualizar(req, res) {
             cambios.comprobante_url = comprobante_url;
         }
 
-      
+
         await sequelize.transaction(async (transaction) => {
             pago.set(cambios);
             await pago.save({ transaction });
