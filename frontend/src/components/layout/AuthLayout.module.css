@@ -68,8 +68,8 @@
 
 @media (min-width: 1024px) {
     .pantalla {
-        justify-content: space-between;
-        gap: var(--spacing-2xl);
+        justify-content: center;
+        gap: clamp(48px, 8vw, 160px);
         padding: var(--spacing-2xl) 6vw;
         /* Cuando esté la foto, agregar al final de esta lista:
            url('../../assets/cancha-noche.jpg') center / cover */
