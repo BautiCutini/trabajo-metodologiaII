@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import AuthLayout from '../../components/layout/AuthLayout';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import { useAuth } from '../../context/AuthContext';
+import { rutaSegunRol } from '../../utils/rutaSegunRol';
 import styles from './Auth.module.css';
 
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,16 +26,29 @@ function validar({ email, password }) {
     return errores;
 }
 
+function mensajeDeError(error) {
+    if (error.status === 401) return 'El correo o la contraseña son incorrectos.';
+    return error.message;
+}
+
 function Login() {
+    const { usuario, verificando, iniciarSesion } = useAuth();
+
     const [datos, setDatos] = useState({ email: '', password: '' });
     const [errores, setErrores] = useState({});
     const [errorGeneral, setErrorGeneral] = useState('');
     const [cargando, setCargando] = useState(false);
 
+    // Si ya hay sesión (recién logueado o entró a /login estando logueado), se va a su inicio
+    if (usuario) {
+        return <Navigate to={rutaSegunRol(usuario.rol)} replace />;
+    }
+
+    if (verificando) return null;
+
     function manejarCambio(evento) {
         const { name, value } = evento.target;
         setDatos((previos) => ({ ...previos, [name]: value }));
-        // Si el campo tenía error, se borra apenas el usuario lo corrige
         setErrores((previos) => ({ ...previos, [name]: undefined }));
         setErrorGeneral('');
     }
@@ -47,10 +62,10 @@ function Login() {
 
         setCargando(true);
         try {
-            // PROVISORIO: simula la espera del servidor.
-            // En el próximo paso se reemplaza por el login real.
-            await new Promise((resolver) => setTimeout(resolver, 1000));
-            setErrorGeneral('Todavía no está conectado con el servidor.');
+            await iniciarSesion(datos.email.trim(), datos.password);
+            // No hace falta redirigir acá: al cambiar el usuario, el <Navigate> de arriba lo hace
+        } catch (error) {
+            setErrorGeneral(mensajeDeError(error));
         } finally {
             setCargando(false);
         }
