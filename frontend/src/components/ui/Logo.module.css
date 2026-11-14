@@ -1,0 +1,28 @@
+.logo {
+    position: relative;
+    display: inline-block;
+    padding-bottom: var(--spacing-xs);
+    color: var(--color-text);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-bold);
+    letter-spacing: -0.02em;
+    /* Inter cursiva no está cargada, así que se inclina con transform */
+    transform: skewX(-8deg);
+}
+
+/* La rayita lima de abajo */
+.logo::after {
+    content: '';
+    position: absolute;
+    left: 4%;
+    bottom: 0;
+    width: 70%;
+    height: 3px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-secondary);
+    box-shadow: var(--glow-lime);
+}
+
+.grande {
+    font-size: var(--font-size-2xl);
+}
