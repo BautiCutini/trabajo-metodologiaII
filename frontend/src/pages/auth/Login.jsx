@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import AuthLayout from '../../components/layout/AuthLayout';
 import Input from '../../components/ui/Input';
@@ -34,14 +34,17 @@ function mensajeDeError(error) {
 function Login() {
     const { usuario, verificando, iniciarSesion } = useAuth();
 
+    const ubicacion = useLocation();
+
     const [datos, setDatos] = useState({ email: '', password: '' });
     const [errores, setErrores] = useState({});
     const [errorGeneral, setErrorGeneral] = useState('');
     const [cargando, setCargando] = useState(false);
 
-    // Si ya hay sesión (recién logueado o entró a /login estando logueado), se va a su inicio
+    
     if (usuario) {
-        return <Navigate to={rutaSegunRol(usuario.rol)} replace />;
+        const destino = ubicacion.state?.desde ?? rutaSegunRol(usuario.rol);
+        return <Navigate to={destino} replace />;
     }
 
     if (verificando) return null;
