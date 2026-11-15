@@ -35,3 +35,16 @@
 .enlace:hover {
     text-decoration: underline;
 }
+
+.fila {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+}
+
+/* En celulares muy angostos, uno debajo del otro */
+@media (max-width: 360px) {
+    .fila {
+        grid-template-columns: 1fr;
+    }
+}
