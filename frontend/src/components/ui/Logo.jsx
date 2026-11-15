@@ -1,11 +1,13 @@
+import logo from '../../assets/logoCompleto.png';
 import styles from './Logo.module.css';
 
-// Provisorio: cuando tengamos el SVG del logo, se reemplaza solo este componente.
 function Logo({ grande = false }) {
     return (
-        <span className={`${styles.logo} ${grande ? styles.grande : ''}`}>
-            Picado
-        </span>
+        <img
+            src={logo}
+            alt="Picado"
+            className={`${styles.logo} ${grande ? styles.grande : ''}`}
+        />
     );
 }
 
