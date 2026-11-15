@@ -1,0 +1,73 @@
+.boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    min-height: 48px;
+    padding: 0 var(--spacing-lg);
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius-button);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-bold);
+}
+
+.boton:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.boton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Variantes */
+
+.primario {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+}
+
+.primario:hover:not(:disabled) {
+    box-shadow: var(--glow-lime);
+}
+
+.secundario {
+    background-color: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.secundario:hover:not(:disabled) {
+    background-color: var(--color-hover);
+    border-color: var(--color-secondary);
+}
+
+.peligro {
+    background-color: var(--color-danger);
+    color: var(--color-text);
+}
+
+.peligro:hover:not(:disabled) {
+    box-shadow: 0 0 18px rgba(220, 69, 69, 0.35);
+}
+
+/* Modificadores */
+
+.anchoCompleto {
+    width: 100%;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+    to {
+        transform: rotate(360deg);
+    }
+}
