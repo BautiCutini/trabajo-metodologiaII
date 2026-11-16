@@ -1,0 +1,337 @@
+*/
+
+.perfil {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    animation: perfil-aparecer 0.5s ease both;
+}
+
+
+.perfil h1,
+.perfil h2 {
+    color: var(--color-text);
+}
+
+.perfil p {
+    color: var(--color-text-muted);
+}
+
+.perfil__encabezado h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-bold);
+    line-height: 1.15;
+}
+
+/* --- Tarjeta del usuario --- */
+
+.perfil__usuario {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    overflow: hidden;
+    padding: var(--spacing-md);
+    border: var(--border-width) solid rgba(185, 231, 105, 0.35);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.perfil__cancha {
+    position: absolute;
+    right: -24px;
+    bottom: -16px;
+    width: 200px;
+    color: var(--color-secondary);
+    opacity: 0.1;
+    transform: perspective(500px) rotateX(35deg) rotateZ(-12deg);
+    pointer-events: none;
+}
+
+.perfil__foto {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.perfil__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    border: 3px solid var(--color-secondary);
+    border-radius: var(--radius-full);
+    background-color: var(--color-surface-alt);
+    box-shadow: var(--glow-lime);
+    color: var(--color-secondary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-bold);
+}
+
+.perfil__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfil__editar-foto {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    box-shadow: var(--glow-lime);
+}
+
+.perfil__editar-foto svg {
+    width: 16px;
+    height: 16px;
+}
+
+.perfil__editar-foto:hover {
+    transform: scale(1.08);
+}
+
+.perfil__datos {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    min-width: 0;
+}
+
+.perfil__datos h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-bold);
+    overflow-wrap: anywhere;
+}
+
+.perfil__datos p {
+    margin-top: calc(var(--spacing-sm) * -1);
+    font-size: var(--font-size-sm);
+    overflow-wrap: anywhere;
+}
+
+.perfil__rol {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-bold);
+}
+
+/* --- Opciones --- */
+
+.perfil__opciones {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.opcion {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-height: 56px;
+    padding: 12px var(--spacing-md);
+    border: var(--border-width) solid var(--color-border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-glass);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.opcion--enlace:hover {
+    border-color: rgba(185, 231, 105, 0.5);
+    box-shadow: var(--shadow-card), var(--glow-green);
+    transform: translateY(-2px);
+}
+
+.opcion__icono {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--color-secondary);
+}
+
+.opcion__texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.opcion__texto h2 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-semibold);
+}
+
+
+.opcion__texto p {
+    display: none;
+    font-size: var(--font-size-sm);
+}
+
+.opcion__flecha {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--color-text);
+}
+
+
+
+.interruptor {
+    position: relative;
+    flex-shrink: 0;
+    width: 56px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.interruptor--activo {
+    background-color: var(--color-secondary);
+    box-shadow: var(--glow-lime);
+}
+
+.interruptor__perilla {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-normal);
+}
+
+.interruptor--activo .interruptor__perilla {
+    transform: translateX(24px);
+}
+
+
+
+.perfil__salir {
+    margin-top: var(--spacing-sm);
+}
+
+.perfil__salir button {
+    min-height: 56px;
+    box-shadow: var(--glow-lime);
+}
+
+
+
+@media (min-width: 701px) {
+    .perfil {
+        gap: var(--spacing-lg);
+    }
+
+    .perfil__encabezado h1 {
+        font-size: var(--font-size-3xl);
+    }
+
+    .perfil__encabezado p {
+        color: var(--color-text);
+        font-size: var(--font-size-lg);
+    }
+
+    .perfil__usuario {
+        gap: 40px;
+        padding: var(--spacing-xl) 48px;
+        border-radius: var(--radius-panel);
+    }
+
+    .perfil__cancha {
+        right: 16px;
+        bottom: -8px;
+        width: 380px;
+    }
+
+    .perfil__avatar {
+        width: 152px;
+        height: 152px;
+        border-width: 4px;
+        font-size: var(--font-size-3xl);
+    }
+
+    .perfil__editar-foto {
+        right: 4px;
+        bottom: 4px;
+        width: 44px;
+        height: 44px;
+    }
+
+    .perfil__editar-foto svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .perfil__datos h2 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .perfil__datos p {
+        font-size: var(--font-size-lg);
+    }
+
+    .perfil__opciones {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+
+    .opcion {
+        min-height: 80px;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .opcion__icono {
+        width: 36px;
+        height: 36px;
+    }
+
+    .opcion__texto h2 {
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-bold);
+    }
+
+    .opcion__texto p {
+        display: block;
+    }
+
+    .perfil__salir button {
+        min-height: 64px;
+        font-size: var(--font-size-xl);
+    }
+}
+
+/* ========================================
+ANIMACIÓN DE ENTRADA
+======================================== */
+
+@keyframes perfil-aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

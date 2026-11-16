@@ -116,7 +116,8 @@ SECCIÓN RECOMENDADAS
 .inicio__grid-canchas {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
+    gap: 14px;
+    align-items: start;
 }
 
 /* ========================================
@@ -223,10 +224,12 @@ ACCESOS RAPIDOS
 
 .accesos-rapidos {
     display: grid;
-    grid-template-columns: minmax(280px, 1.5fr) repeat(3, minmax(110px, 0.5fr));
-    gap: 14px;
+    grid-template-columns: minmax(280px, 1.5fr) auto;
+    column-gap: 28px;
+    row-gap: 14px;
     margin-bottom: 36px;
     align-items: stretch;
+    max-width: 1100px;
 }
 
 .accesos-rapidos__principal {
@@ -242,9 +245,11 @@ ACCESOS RAPIDOS
     font-size: 1.35rem;
     font-weight: var(--font-bold);
     box-shadow: var(--glow-lime);
-    transition: 
-        transform var(--transition-fast),
-        box-shadow var(--transition-normal);
+    transition: transform var(--transition-fast),
+                box-shadow var(--transition-normal);
+    height: 88px;
+    min-height: 88px;
+    align-self: center;
 }
 
 .accesos-rapidos__principal:hover {
@@ -262,71 +267,87 @@ ACCESOS RAPIDOS
     line-height: 1;
 }
 
+.accesos-rapidos__grupo {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
 .accesos-rapidos__secundario {
-    min-height: 88px;
-    padding: 16px;
+    width: 125px;
+    min-width: 125px;
+    min-height: 115px;
+    height: 115px;
+    align-self: center;
+    padding: 10px 8px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+
     text-align: center;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    background: var(--color-surface-glass);
-    color: var(--color-text);
-    font-weight: var(--font-semibold);
-    transition: 
-        background var(--transition-normal),
-        border-color var(--transition-normal),
-        transform var(--transition-fast);
+    border: 1px solid rgba(185, 231, 105, 0.4);
+    border-radius: 16px;
+    background: rgba(0, 30, 19, 0.78);
+    color: #FFFFFF;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+
+    transition: all var(--transition-normal);
 }
 
 .accesos-rapidos__secundario .accesos-rapidos__icono {
-    color: var(--color-secondary);
-    font-size: 2rem;
+    color: #B9E769;
 }
 
 .accesos-rapidos__secundario:hover {
-    background: var(--color-hover);
-    border-color: var(--color-secondary);
+    background: rgba(15, 65, 38, 0.9);
+    border-color: #B9E769;
     transform: translateY(-3px);
 }
 
-/* Móvil */
-
 @media (max-width: 700px) {
     .accesos-rapidos {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 12px;
         margin-bottom: 28px;
     }
-    
+
     .accesos-rapidos__principal {
-        grid-column: 1 / -1;
         min-height: 72px;
         padding: 16px 20px;
         font-size: 1.1rem;
     }
-    
+
+    .accesos-rapidos__grupo {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+
     .accesos-rapidos__secundario {
+        width: auto;
         min-height: 90px;
         font-size: var(--font-size-sm);
     }
 }
-
 
 /* ========================================
 PROXIMA RESERVA
 ======================================== */
 
 .proxima-reserva {
-    padding: 24px;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-panel);
-    background: var(--color-surface-glass);
-    box-shadow: var(--shadow-card);
-    backdrop-filter: blur(12px);
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    width: 100%;
+    max-width: 640px;
 }
 
 .proxima-reserva__encabezado {
@@ -334,107 +355,148 @@ PROXIMA RESERVA
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    margin-bottom: 22px;
-}
-
-.proxima-reserva__etiqueta {
-    color: var(--color-secondary);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-bold);
-    letter-spacing: 1.5px;
+    margin-bottom: 12px;
 }
 
 .proxima-reserva__encabezado h2 {
-    margin-top: 5px;
     font-size: var(--font-size-xl);
+    color: #FFFFFF;
+    margin: 0;
 }
 
-.proxima-reserva__estado {
-    padding: 7px 13px;
-    border-radius: var(--radius-full);
-    color: var(--color-secondary);
-    background: rgba(185, 231, 105, 0.12);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-semibold);
+.proxima-reserva__ver-todas {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #B9E769;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.proxima-reserva__ver-todas:hover {
+    color: #D0FF7A;
 }
 
 .proxima-reserva__contenido {
+    position: relative;
     display: flex;
-    gap: 22px;
+    align-items: center;
+    gap: 16px;
+    min-height: 98px;
+    padding: 10px 16px 10px 12px;
+
+    border: 1px solid rgba(185, 231, 105, 0.35);
+    border-left: 2px solid #B9E769;
+    border-radius: 18px;
+
+    background: rgba(0, 25, 18, 0.78);
+    box-shadow: 0 0 12px rgba(185, 231, 105, 0.10);
+
+    color: #FFFFFF;
+    text-decoration: none;
+
+    transition: all var(--transition-normal);
+}
+
+.proxima-reserva__contenido:hover {
+    border-color: #B9E769;
+    box-shadow: 0 0 18px rgba(185, 231, 105, 0.18);
 }
 
 .proxima-reserva__imagen {
-    width: 42%;
-    min-height: 220px;
+    width: 110px;
+    height: 80px;
+    flex-shrink: 0;
     object-fit: cover;
-    border-radius: var(--radius-card);
+    border-radius: 13px;
 }
 
 .proxima-reserva__datos {
     display: flex;
     flex: 1;
+    min-width: 0;
     flex-direction: column;
     align-items: flex-start;
+    gap: 5px;
 }
 
 .proxima-reserva__datos h3 {
-    font-size: var(--font-size-xl);
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
 }
 
 .proxima-reserva__datos > p {
-    margin-top: 5px;
     color: var(--color-text-muted);
+    font-size: 0.85rem;
+    margin: 0;
 }
 
 .proxima-reserva__detalle {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 22px;
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    gap: 5px;
+    margin-top: 3px;
+    color: #D4DED7;
+    font-size: 0.85rem;
 }
 
-.proxima-reserva__boton {
+.proxima-reserva__detalle span {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    margin-top: auto;
-    padding: 12px 20px;
-    border-radius: var(--radius-button);
-    background: var(--color-secondary);
-    color: var(--color-primary);
-    font-weight: var(--font-bold);
+    gap: 8px;
 }
 
-.proxima-reserva__boton:hover {
-    box-shadow: var(--glow-lime);
-    transform: translateY(-2px);
+.proxima-reserva__detalle svg {
+    color: #B9E769;
+    flex-shrink: 0;
 }
+
+.proxima-reserva__estado {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: rgba(185, 231, 105, 0.15);
+    color: #B9E769;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.proxima-reserva__flecha {
+    flex-shrink: 0;
+    color: #FFFFFF;
+}
+
+/* Móvil */
 
 @media (max-width: 700px) {
-    .proxima-reserva {
-        padding: 18px;
-    }
-    
     .proxima-reserva__contenido {
-        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
     }
-    
+
     .proxima-reserva__imagen {
-        width: 100%;
-        min-height: 180px;
-        max-height: 200px;
+        width: 90px;
+        height: 75px;
     }
-    
+
     .proxima-reserva__datos h3 {
-    font-size: var(--font-size-lg);
+        font-size: 0.9rem;
     }
-    
-    .proxima-reserva__boton {
-        width: 100%;
-        margin-top: 22px;
+
+    .proxima-reserva__datos > p,
+    .proxima-reserva__detalle {
+        font-size: 0.75rem;
+    }
+
+    .proxima-reserva__estado {
+        display: none;
+    }
+
+    .proxima-reserva__flecha {
+        width: 18px;
     }
 }
 
@@ -449,8 +511,8 @@ TARJETAS DE CANCHAS
     background: var(--color-surface-glass);
     box-shadow: var(--shadow-card);
     transition:
-                transform var(--transition-normal),
-                border-color var(--transition-normal);
+        transform var(--transition-normal),
+        border-color var(--transition-normal);
 }
 
 .cancha-card:hover {
@@ -460,7 +522,7 @@ TARJETAS DE CANCHAS
 
 .cancha-card__imagen-contenedor {
     position: relative;
-    height: 175px;
+    height: 115px;
     overflow: hidden;
 }
 
@@ -477,9 +539,9 @@ TARJETAS DE CANCHAS
 
 .cancha-card__tipo {
     position: absolute;
-    left: 14px;
-    bottom: 14px;
-    padding: 7px 12px;
+    left: 12px;
+    bottom: 10px;
+    padding: 6px 10px;
     border-radius: var(--radius-full);
     background: var(--color-secondary);
     color: var(--color-primary);
@@ -497,18 +559,22 @@ TARJETAS DE CANCHAS
 }
 
 .cancha-card__ubicacion {
-    margin-top: 9px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
 }
+
 
 .cancha-card__pie {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .cancha-card__precio {
@@ -518,7 +584,10 @@ TARJETAS DE CANCHAS
 }
 
 .cancha-card__boton {
-    padding: 9px 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
     border-radius: var(--radius-button);
     background: var(--color-secondary);
     color: var(--color-primary);
@@ -531,73 +600,78 @@ TARJETAS DE CANCHAS
     box-shadow: var(--glow-lime);
 }
 
+
 /* ========================================
-ACTIVIDAD RECIENTE
+   ACTIVIDAD RECIENTE
 ======================================== */
 
 .actividad-reciente {
-    padding: 24px;
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-panel);
-    background: var(--color-surface-glass);
+    padding: 20px;
+    border: 1px solid rgba(38, 115, 77, 0.65);
+    border-radius: 20px;
+    background: rgba(20, 55, 42, 0.94);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(12px);
 }
 
-.actividad-reciente__encabezado {
-    margin-bottom: 24px;
-}
+/* ENCABEZADO */
 
-.actividad-reciente__etiqueta {
+.actividad-reciente__encabezado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(38, 115, 77, 0.55);
     color: var(--color-secondary);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-bold);
-    letter-spacing: 1.5px;
 }
 
 .actividad-reciente__encabezado h2 {
-    margin-top: 6px;
-    font-size: var(--font-size-xl);
+    margin: 0;
+    color: #FFFFFF;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-bold);
 }
+
+/* LISTA */
 
 .actividad-reciente__lista {
     display: flex;
     flex-direction: column;
 }
 
+/* ACTIVIDADES */
+
 .actividad-reciente__item {
     display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.actividad-reciente__item:first-child {
-    padding-top: 0;
+    align-items: center;
+    gap: 12px;
+    min-height: 68px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(38, 115, 77, 0.5);
 }
 
 .actividad-reciente__item:last-child {
-    padding-bottom: 0;
     border-bottom: none;
+    padding-bottom: 0;
 }
+
+/* ICONOS */
 
 .actividad-reciente__icono {
     display: flex;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-full);
-    font-size: 1.1rem;
-    font-weight: var(--font-bold);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
 }
 
 .actividad-reciente__icono--confirmada,
 .actividad-reciente__icono--realizada {
-    color: var(--color-secondary);
-    background: rgba(185, 231, 105, 0.12);
+    color: #B9E769;
+    background: rgba(185, 231, 105, 0.13);
 }
 
 .actividad-reciente__icono--cancelada {
@@ -605,27 +679,38 @@ ACTIVIDAD RECIENTE
     background: rgba(220, 69, 69, 0.12);
 }
 
+/* DATOS */
+
 .actividad-reciente__datos {
+    flex: 1;
     min-width: 0;
 }
 
 .actividad-reciente__datos h3 {
+    color: #FFFFFF;
     font-size: var(--font-size-sm);
     font-weight: var(--font-semibold);
 }
 
 .actividad-reciente__datos p {
-    margin-top: 5px;
-    color: var(--color-text-muted);
+    margin-top: 4px;
+    color: #D0DDD4;
     font-size: var(--font-size-xs);
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
 .actividad-reciente__fecha {
     display: block;
-    margin-top: 8px;
-    color: var(--color-text-disabled);
+    margin-top: 5px;
+    color: #91A99A;
     font-size: var(--font-size-xs);
+}
+
+/* FLECHAS */
+
+.actividad-reciente__flecha {
+    flex-shrink: 0;
+    color: #FFFFFF;
 }
 
 
@@ -675,4 +760,510 @@ NAVEGACIÓN INFERIOR - MÓVIL
     .bottom-nav__nombre {
         font-weight: var(--font-medium);
     }
+}
+
+
+/* ========================================
+ICONOS LUCIDE
+======================================== */
+
+.sidebar__icono,
+.bottom-nav__icono,
+.accesos-rapidos__icono,
+.accesos-rapidos__flecha,
+.proxima-reserva__detalle svg,
+.proxima-reserva__boton svg,
+.cancha-card__ubicacion svg,
+.cancha-card__boton svg,
+.actividad-reciente__icono svg,
+.inicio__perfil svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+.sidebar__icono {
+    width: 20px;
+    height: 20px;
+}
+
+.bottom-nav__icono {
+    width: 22px;
+    height: 22px;
+}
+
+.accesos-rapidos__icono {
+    width: 26px;
+    height: 26px;
+}
+
+.accesos-rapidos__flecha {
+    width: 26px;
+    height: 26px;
+}
+
+.proxima-reserva__detalle span,
+.proxima-reserva__boton,
+.cancha-card__ubicacion,
+.cancha-card__boton {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.proxima-reserva__detalle svg,
+.cancha-card__ubicacion svg {
+    color: var(--color-secondary);
+}
+
+.actividad-reciente__icono svg {
+    width: 20px;
+    height: 20px;
+}
+
+.inicio__perfil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 700px) {
+    .bottom-nav__icono {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* ========================================
+SIDEBAR - NAVEGACIÓN DESKTOP
+======================================== */
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 28px 18px;
+    background-color: #001b10;
+    background-image: url('/images/sidebar-fondo.png');
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    border-right: 1px solid var(--color-border-subtle);
+    z-index: 10;
+}
+
+.sidebar__logo {
+    margin-bottom: 48px;
+    padding: 0 12px;
+}
+
+.sidebar__logo img {
+    width: 230px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.sidebar__logo h2 {
+    color: var(--color-text);
+    font-size: 1.7rem;
+    font-weight: 700;
+}
+
+.sidebar__logo span {
+    color: var(--color-secondary);
+    margin-left: 5px;
+}
+
+.sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    
+    padding-bottom: 28px;
+    border-bottom: 2px solid #B9E769;
+    width: 85%;
+    align-self: center;
+}
+
+.sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 20px 12px;
+    border-radius: 12px;
+    color: #F2F7F3;
+    background: transparent;
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-align: left;
+    transition: all var(--transition-normal);
+}
+
+.sidebar__link:hover {
+    color: var(--color-secondary);
+    background: var(--color-hover);
+}
+
+.sidebar__link.active {
+    background: #B9E769;
+    color: #0B1712;
+    font-weight: 700;
+    border: 1px solid #B9E769;
+    box-shadow: 0 0 12px rgba(185, 231, 105, 0.18);
+}
+
+.sidebar__link.active .sidebar__icono {
+    color: #0B1712;
+}
+
+.sidebar__icono {
+    color: #B9E769;
+    stroke: currentColor;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+}
+
+.sidebar__inferior {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+
+    background: rgba(8, 45, 25, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+
+    border: 1px solid rgba(185, 231, 105, 0.2);
+    border-radius: 20px;
+}
+
+/* ========================================
+CORRECCIÓN DE CONTRASTE
+======================================== */
+
+.inicio__header h1,
+.inicio__recomendadas h2,
+.inicio__seccion-titulo,
+.proxima-reserva__encabezado h2,
+.proxima-reserva__datos h3,
+.actividad-reciente__encabezado h2,
+.actividad-reciente__datos h3,
+.cancha-card__contenido h3 {
+    color: var(--color-text);
+}
+
+.proxima-reserva__datos > p,
+.actividad-reciente__datos p,
+.cancha-card__ubicacion {
+    color: var(--color-text-muted);
+}
+
+/* ========================================
+BOTONES SIDEBAR
+======================================== */
+
+.sidebar__inferior button {
+    cursor: pointer;
+    border: none;
+}
+
+/* ========================================
+RESPONSIVE SIDEBAR
+======================================== */
+
+@media (max-width: 700px) {
+    .sidebar {
+        display: none;
+    }
+}
+
+
+
+
+
+.inicio {
+    min-height: 100vh;
+    position: relative;
+    isolation: isolate;
+    background-color: #0B1712;
+}
+
+/* Imagen de la cancha */
+.inicio::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    /* La imagen termina cerca de Canchas recomendadas */
+    height: 62vh;
+
+    background-image: url('/images/fondo-inicio.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    filter: brightness(1.70) saturate(1.3) contrast(1.20);
+
+    /* Mantiene la imagen y después la desvanece */
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        black 0%,
+        black 55%,
+        transparent 100%
+    );
+
+    mask-image: linear-gradient(
+        to bottom,
+        black 0%,
+        black 55%,
+        transparent 100%
+    );
+
+    z-index: -1;
+    pointer-events: none;
+}
+
+
+/* DISTRIBUCIÓN PRINCIPAL */
+.inicio__contenido {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.95fr) minmax(260px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.inicio__principal {
+    min-width: 0;
+}
+
+.inicio__recomendadas {
+    margin-top: 70px;
+}
+
+.inicio__titulo-seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.inicio__titulo-seccion a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #B9E769;
+    text-decoration: none;
+}
+
+/* ========================================
+TARJETA PROMOCIONAL
+======================================== */
+
+.inicio__promocional {
+    position: relative;
+    width: 100%;
+    max-width: 470px;
+    min-height: 227px;
+    margin-top: 110px;
+    margin-left: 20px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-size: auto 100%;
+    background-position: right center; 
+
+    border: 1px solid rgba(38, 115, 77, 0.65);
+    border-radius: 20px;
+
+    background-color: #00150D;
+    background-image: url('/images/promo-balon.png');
+    background-size: auto 100%;
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+
+.inicio__promo-texto {
+    position: relative;
+    z-index: 1;
+    width: 65%;
+    max-width: 260px;
+}
+
+.inicio__promo-texto h2 {
+    margin: 0 0 22px;
+    color: #FFFFFF;
+    font-size: clamp(25px, 2.2vw, 32px);
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+.inicio__promo-texto h2 span {
+    color: #B9E769;
+    font-style: italic;
+}
+
+.inicio__promo-texto p {
+    margin: 0;
+    color: #D0DDD4;
+    font-size: clamp(12px, 1vw, 15px);
+    line-height: 1.4;
+}
+
+/* ========================================
+RESPONSIVE
+======================================== */
+
+@media (max-width: 1100px) {
+    .inicio__promocional {
+        margin-left: 0;
+        margin-top: 30px;
+        min-height: 170px;
+    }
+
+    .inicio__promo-texto {
+        width: 62%;
+    }
+}
+
+@media (max-width: 600px) {
+    .inicio__promocional {
+        max-width: 100%;
+        min-height: 160px;
+        padding: 16px;
+        background-position: right center;
+    }
+
+    .inicio__promo-texto {
+        width: 65%;
+    }
+}
+/* COLUMNA DERECHA */
+.inicio__lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+
+/* ========================================
+TIP DE PICADO
+======================================== */
+
+.inicio__tip {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    min-height: 118px;
+    padding: 16px;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    border: 1px solid rgba(38, 115, 77, 0.7);
+    border-radius: 17px;
+
+background-image:
+    linear-gradient(
+        90deg,
+        rgba(0, 20, 12, 0.12),
+        rgba(0, 20, 12, 0)
+    ),
+    url('/images/tip-picado.png');
+
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+}
+
+/* TÍTULO */
+
+.inicio__tip-titulo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 8px;
+    color: #B9E769;
+}
+
+.inicio__tip-titulo h3 {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* DESCRIPCIÓN */
+
+.inicio__tip p {
+    position: relative;
+    z-index: 1;
+    max-width: 78%;
+    margin: 0;
+    color: #E0E9E2;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+/* CALENDARIO */
+
+.inicio__tip-icono {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 58px;
+    height: 58px;
+    color: #B9E769;
+    opacity: 0.22;
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+    .inicio__contenido {
+        grid-template-columns: minmax(0, 1fr) minmax(250px, 0.8fr);
+    }
+
+    .inicio__promocional {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .inicio__lateral {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+}
+
+@media (max-width: 800px) {
+    .inicio__contenido {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .inicio__principal,
+    .inicio__promocional,
+    .inicio__lateral {
+        width: 100%;
+    }
+
+    .inicio__promocional {
+        min-height: 160px;
+    }
+}
+.inicio__principal > .proxima-reserva {
+    margin-top: 100px;
 }
