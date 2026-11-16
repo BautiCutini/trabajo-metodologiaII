@@ -1,6 +1,17 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import './Sidebar.css';
 
 function Sidebar() {
+
+      const { cerrarSesion } = useAuth();
+    const navigate = useNavigate();
+
+    function salir() {
+        cerrarSesion();
+        navigate('/login', { replace: true });
+    }
+    
     const opciones = [
         { nombre: 'Inicio', icono: '⌂', ruta: '/' },
         { nombre: 'Reservar cancha', icono: '▦', ruta: '/reservar' },
@@ -36,7 +47,7 @@ function Sidebar() {
                         Configuración
                 </button>
                 
-                <button className="sidebar__link">
+                <button className="sidebar__link" onClick={salir}>
                     <span className="sidebar__icono">⇥</span>
                         Cerrar sesión
                 </button>

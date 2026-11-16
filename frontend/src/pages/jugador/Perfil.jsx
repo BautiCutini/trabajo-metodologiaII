@@ -24,8 +24,7 @@ const ROLES = {
     ADMIN_PLATAFORMA: 'Administrador de plataforma',
 };
 
-// El orden es el de la grilla (de izquierda a derecha, fila por fila).
-// La opción sin "ruta" no navega: lleva un interruptor.
+
 const OPCIONES = [
     { clave: 'datos', Icono: User, titulo: 'Datos personales', detalle: 'Editá tu información de cuenta', ruta: '/perfil/datos' },
     { clave: 'reservas', Icono: CalendarDays, titulo: 'Mis reservas', detalle: 'Gestioná tus reservas y su estado', ruta: '/reservas' },
