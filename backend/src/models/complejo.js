@@ -27,6 +27,16 @@ const Complejo = (Sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+                latitud: {
+            type: DataTypes.DOUBLE,
+            allowNull: true,
+            validate: { min: -90, max: 90 }
+        },
+        longitud: {
+            type: DataTypes.DOUBLE,
+            allowNull: true,
+            validate: { min: -180, max: 180 }
+        },
         // Establecí ACTIVO como estado inicial para los complejos nuevos.
         estado: {
             type: DataTypes.ENUM('ACTIVO', 'INACTIVO'),

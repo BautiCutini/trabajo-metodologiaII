@@ -17,7 +17,7 @@ function AccesosRapidos() {
             </Link>
             
             <div className="accesos-rapidos__grupo">
-                <Link to="/complejos" className="accesos-rapidos__secundario">
+                <Link to="/mapa" className="accesos-rapidos__secundario">
                     <MapPin className="accesos-rapidos__icono" size={26} />
                     <span>Buscar en el mapa</span>
                 </Link>
