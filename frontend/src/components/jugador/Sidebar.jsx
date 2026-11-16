@@ -1,44 +1,53 @@
 import { NavLink } from 'react-router-dom';
+import {
+    House,
+    CalendarDays,
+    CalendarCheck,
+    Heart,
+    UserRound,
+    Settings,
+    LogOut,
+} from 'lucide-react';
 
 function Sidebar() {
     const opciones = [
-        { nombre: 'Inicio', icono: '⌂', ruta: '/' },
-        { nombre: 'Reservar cancha', icono: '▦', ruta: '/reservar' },
-        { nombre: 'Mis reservas', icono: '▦', ruta: '/reservas' },
-        { nombre: 'Favoritos', icono: '♡', ruta: '/favoritos' },
-        { nombre: 'Mi perfil', icono: '♙', ruta: '/perfil' },
+        { nombre: 'Inicio', Icono: House, ruta: '/' },
+        { nombre: 'Reservar cancha', Icono: CalendarDays, ruta: '/reservar' },
+        { nombre: 'Mis reservas', Icono: CalendarCheck, ruta: '/reservas' },
+        { nombre: 'Favoritos', Icono: Heart, ruta: '/favoritos' },
+        { nombre: 'Mi perfil', Icono: UserRound, ruta: '/perfil' },
     ];
-
+    
     return (
         <aside className="sidebar">
             <div className="sidebar__logo">
-                <h2>Picado<span>⚽</span></h2>
+                <img src="/images/logo-picado.png" alt="Picado" />
             </div>
             
             <nav className="sidebar__nav">
-                {opciones.map((opcion) => (
+                {opciones.map(({ nombre, Icono, ruta }) => (
                     <NavLink
-                        key={opcion.nombre}
-                        to={opcion.ruta}
+                        key={nombre}
+                        to={ruta}
                         className={({ isActive }) =>
                             `sidebar__link ${isActive ? 'active' : ''}`
                         }
                     >
-                        <span className="sidebar__icono">{opcion.icono}</span>
-                            {opcion.nombre}
+                        <Icono className="sidebar__icono" size={20} />
+                        {nombre}
                     </NavLink>
                 ))}
             </nav>
             
             <div className="sidebar__inferior">
-                <button className="sidebar__link">
-                    <span className="sidebar__icono">⚙</span>
-                        Configuración
+                <button className="sidebar__link" type="button">
+                    <Settings className="sidebar__icono" size={20} />
+                    Configuración
                 </button>
                 
-                <button className="sidebar__link">
-                    <span className="sidebar__icono">⇥</span>
-                        Cerrar sesión
+                <button className="sidebar__link" type="button">
+                    <LogOut className="sidebar__icono" size={20} />
+                    Cerrar sesión
                 </button>
             </div>
         </aside>

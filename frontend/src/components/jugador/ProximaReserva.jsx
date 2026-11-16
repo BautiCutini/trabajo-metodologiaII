@@ -1,4 +1,9 @@
 import { Link } from 'react-router-dom';
+import {
+    CalendarDays,
+    Clock,
+    ChevronRight,
+} from 'lucide-react';
 
 function ProximaReserva() {
     const reserva = {
@@ -6,26 +11,22 @@ function ProximaReserva() {
         cancha: 'Cancha 2 · Fútbol 5',
         fecha: 'Viernes 15 de noviembre',
         horario: '19:00 - 20:00',
-        direccion: 'Bahía Blanca, Buenos Aires',
+        estado: 'Confirmada',
         imagen: '/images/complejo-norte.jpg',
     };
     
     return (
         <section className="proxima-reserva">
             <div className="proxima-reserva__encabezado">
-                <div>
-                    <span className="proxima-reserva__etiqueta">
-                        TU PRÓXIMO PARTIDO
-                    </span>
-                        <h2>Próxima reserva</h2>
-                </div>
+                <h2>Próxima reserva</h2>
                 
-                <span className="proxima-reserva__estado">
-                    Confirmada
-                </span>
+                <Link to="/reservas" className="proxima-reserva__ver-todas">
+                    Ver todas
+                    <ChevronRight size={17} />
+                </Link>
             </div>
             
-            <div className="proxima-reserva__contenido">
+            <Link to="/reservas" className="proxima-reserva__contenido">
                 <img
                     className="proxima-reserva__imagen"
                     src={reserva.imagen}
@@ -34,22 +35,31 @@ function ProximaReserva() {
                 
                 <div className="proxima-reserva__datos">
                     <h3>{reserva.complejo}</h3>
-                        <p>{reserva.cancha}</p>
+                    
+                    <p>{reserva.cancha}</p>
                     
                     <div className="proxima-reserva__detalle">
-                        <span>📅 {reserva.fecha}</span>
-                        <span>🕒 {reserva.horario}</span>
-                        <span>📍 {reserva.direccion}</span>
+                        <span>
+                            <CalendarDays size={17} />
+                            {reserva.fecha}
+                        </span>
+                        
+                        <span>
+                            <Clock size={17} />
+                            {reserva.horario}
+                        </span>
                     </div>
-                    
-                    <Link
-                        to="/reservas"
-                        className="proxima-reserva__boton"
-                    >
-                        Ver reserva <span>→</span>
-                    </Link>
                 </div>
-            </div>
+                
+                <span className="proxima-reserva__estado">
+                    {reserva.estado}
+                </span>
+                
+                <ChevronRight
+                    className="proxima-reserva__flecha"
+                    size={23}
+                />
+            </Link>
         </section>
     );
 }
