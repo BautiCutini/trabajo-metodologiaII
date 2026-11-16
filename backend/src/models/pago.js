@@ -34,8 +34,9 @@ const Pago = (Sequelize) => {
     }, 
         {
             tableName: 'pagos',
-            timestamps: false
-        });
-    };
-    
+            timestamps: false,
+            underscored: true
+        }
+    );
+};
     module.exports = Pago;

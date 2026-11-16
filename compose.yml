@@ -50,6 +50,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       CORS_ORIGIN: http://localhost:${FRONTEND_PORT:-5173}
       # Mercado Pago (dejalas vacias hasta que las necesites)
       MP_ACCESS_TOKEN: ${MP_ACCESS_TOKEN:-}

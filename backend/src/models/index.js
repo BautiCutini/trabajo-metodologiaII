@@ -24,7 +24,7 @@ Horario.belongsTo(Cancha, { foreignKey: 'cancha_id' });
 Cancha.hasMany(Reserva, { foreignKey: 'cancha_id' });
 Reserva.belongsTo(Cancha, { foreignKey: 'cancha_id' });
 
-// Vinculé las reservas con el horario seleccionado, manteniendo horario_id como opcional.
+// Vinculo cada reserva con el horario seleccionado. La relación es obligatoria porque horario_id no permite valores NULL.
 Horario.hasMany(Reserva, { foreignKey: 'horario_id' });
 Reserva.belongsTo(Horario, { foreignKey: 'horario_id' });
 

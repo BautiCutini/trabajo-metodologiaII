@@ -45,7 +45,8 @@ const Cancha = (Sequelize) => {
     
         }, {
             tableName: 'canchas',
-            timestamps: false
+            timestamps: false,
+            underscored: true
         });
     };
     

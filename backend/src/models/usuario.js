@@ -54,6 +54,7 @@ const Usuario = (Sequelize) => {
     }, {
         tableName: 'usuarios',
         timestamps: false,
+        underscored: true,
 
         // Ninguna consulta devuelve el hash, salvo que se pida explícitamente.
         defaultScope: {
@@ -61,7 +62,9 @@ const Usuario = (Sequelize) => {
         },
         scopes: {
             // Solo para el login, que necesita comparar la contraseña.
-            conPassword: {}
+            conPassword: {
+                attributes: { include: ['password'] }
+            }
         },
 
         hooks: {
