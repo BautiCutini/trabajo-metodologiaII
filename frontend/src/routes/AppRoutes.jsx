@@ -3,6 +3,7 @@ import RutaProtegida from './RutaProtegida';
 import Inicio from '../pages/jugador/Inicio';
 import Login from '../pages/auth/Login';
 import Registro from '../pages/auth/Registro';
+import Mapa from '../pages/jugador/Mapa';
 
 function AppRoutes() {
     return (
@@ -14,6 +15,11 @@ function AppRoutes() {
             {/* Cualquier usuario logueado */}
             <Route element={<RutaProtegida />}>
                 <Route path="/" element={<Inicio />} />
+            </Route>
+
+            <Route element={<RutaProtegida />}>
+                <Route path="/" element={<Inicio />} />
+                <Route path="/mapa" element={<Mapa />} />
             </Route>
 
             {/* Cuando existan los paneles, se agregan así:
