@@ -3,7 +3,7 @@ const { Complejo, Cancha } = require('../models');
 const { leerPaginacion, respuestaPaginada } = require('../utils/paginacion');
 
 const CAMPOS_ORDENABLES = ['id', 'nombre'];
-const CAMPOS_EDITABLES = ['nombre', 'direccion', 'telefono', 'descripcion', 'imagen_url', 'estado'];
+const CAMPOS_EDITABLES = ['nombre', 'direccion', 'telefono', 'descripcion', 'imagen_url','latitud', 'longitud', 'estado'];
 const CAMPOS_OBLIGATORIOS = ['nombre', 'direccion', 'telefono', 'descripcion'];
 const ESTADOS = ['ACTIVO', 'INACTIVO'];
 
@@ -56,7 +56,7 @@ async function obtener(req, res) {
 
 async function crear(req, res) {
     try {
-        const { nombre, direccion, telefono, descripcion, imagen_url } = req.body;
+        const { nombre, direccion, telefono, descripcion, imagen_url, latitud, longitud } = req.body;
 
         if (!nombre || !direccion || !telefono || !descripcion) {
             return res.status(400).json({ error: 'Faltan campos obligatorios: nombre, direccion, telefono y descripcion' });
@@ -67,7 +67,9 @@ async function crear(req, res) {
             direccion,
             telefono,
             descripcion,
-            imagen_url: imagen_url ?? null
+            imagen_url: imagen_url ?? null,
+            latitud: latitud ?? null,
+            longitud: longitud ?? null
         });
 
         return res.status(201).json(complejo);
