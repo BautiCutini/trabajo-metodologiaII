@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon --inspect=0.0.0:9229 src/index.js",
     "test": "jest",
-    "dev": "nodemon --inspect=0.0.0:9229 src/index.js"
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration --runInBand",
+    "db:migrate:test": "NODE_ENV=test sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -27,5 +30,8 @@
     "nodemon": "^3.1.14",
     "sequelize-cli": "^6.6.5",
     "supertest": "^7.2.2"
+  },
+    "jest": {
+    "setupFiles": ["<rootDir>/tests/setup-env.js"]
   }
 }
