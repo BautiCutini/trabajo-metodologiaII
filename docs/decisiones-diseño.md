@@ -5,7 +5,7 @@ Sistema de gestión de turnos de canchas · Repositorio: `BautiCutini/trabajo-me
 
 Integrantes: Bautista Cutini · Bautista Bartolini · Francesco Di Carli
 
-Este documento registra tres análisis de diseño sobre el código del proyecto. Dos derivaron en cambios ya aplicados; el tercero en la decisión de conservar la estructura actual. Al final se listan los hallazgos abiertos, con el criterio de mejora de cada uno.
+Este documento registra cuatro análisis de diseño sobre el código del proyecto. Tres derivaron en cambios ya aplicados; el restante en la decisión de conservar la estructura actual. Al final se listan los hallazgos, corregidos y pendientes, con el criterio de mejora de cada uno.
 
 ---
 
@@ -213,6 +213,66 @@ Se conserva la estructura actual, con los dos middlewares separados y `autorizar
 
 Se reconoce la limitación: la verificación manual no es repetible sin intervención humana ni protege contra regresiones futuras. Es deuda consciente, registrada y no invisible. Estos dos middlewares son el primer candidato a tener pruebas automatizadas, porque dependen únicamente de `req.headers` y de una variable de entorno, sin requerir base de datos.
 
+**Actualización.** La deuda se saldó con pruebas automatizadas. Los cuatro casos verificados manualmente quedaron cubiertos en dos niveles: unitario, con `req`, `res` y `next` reemplazados por dobles de prueba (`tests/unit/autenticar.test.js`, `tests/unit/autorizar.test.js`), y de integración, con peticiones HTTP reales contra la ruta `/usuarios` (`tests/integration/proteccion-rutas.test.js`). Los tests de integración agregan una garantía que la verificación manual no daba: si alguien quitara `autorizar` de una ruta, los unitarios seguirían pasando, pero el de integración fallaría.
+
+---
+
+## Caso 4 — Hacer testeable la API sin reestructurar la conexión a la base
+
+### 1. Código analizado
+
+`backend/src/index.js`, `backend/src/config/database.js` y `backend/src/models/index.js`.
+
+### 2. Diagnóstico
+
+Al incorporar pruebas automatizadas aparecieron dos obstáculos.
+
+El primero: `index.js` armaba la aplicación Express **y** la ponía a escuchar en el puerto 3001 en el mismo archivo. Para probar la API con Supertest hace falta la aplicación sin el servidor, porque cada test debe poder enviarle peticiones sin abrir un puerto ni competir con el contenedor que ya está ejecutándose.
+
+El segundo, más profundo, ya estaba registrado como hallazgo pendiente (DIP): los modelos dependen de una instancia concreta de Sequelize creada en `config/database.js`, que lee el nombre de la base de las variables de entorno. No hay un punto donde inyectar otra conexión. Los tests de integración necesitan una base real, pero no pueden usar la de desarrollo, porque vacían tablas antes de cada caso.
+
+### 3. Alternativas consideradas
+
+**A. Inyección de dependencias.** Convertir los modelos para que reciban la conexión desde afuera. Resuelve el hallazgo de DIP de raíz, pero obliga a modificar los seis modelos, los controladores y el arranque. Es un cambio estructural grande a días de una entrega.
+
+**B. Mockear Sequelize.** Reemplazar los modelos por dobles de prueba. Los tests serían rápidos, pero no verificarían lo que más importa: que el hook de bcrypt se dispare, que la restricción de email único funcione o que el rol quede bien guardado. Es la falsa confianza de usar mocks donde se necesita integración.
+
+**C. Usar la base de desarrollo.** Sin cambios de configuración, pero cada ejecución de los tests borraría los datos de trabajo del equipo.
+
+**D. Base de prueba separada, elegida por configuración.** *(elegida)* Separar `app.js` de `index.js`, y apuntar los tests a una base `canchas_test` cambiando la variable de entorno antes de que se cargue cualquier módulo.
+
+### 4. Decisión
+
+Se adoptó la alternativa D:
+
+- `app.js` arma la aplicación y la exporta; `index.js` solo se conecta a la base y la pone a escuchar.
+- `config/config.js` define un entorno `test` que usa `sequelize-cli` para migrar la base de prueba.
+- `tests/setup-env.js`, configurado en Jest como `setupFiles`, cambia `DB_NAME` a `canchas_test` antes de que `database.js` lo lea.
+- Los tests de integración verifican el nombre de la base antes de ejecutarse y se detienen si no termina en `_test`.
+
+La separación de `app.js` es un refactoring en sentido estricto: no cambia el comportamiento observable de la API, solo su estructura.
+
+### 5. Evidencia y trade-offs
+
+**Evidencia**
+
+- `backend/src/app.js` y `backend/src/index.js`
+- `backend/src/config/config.js` — entornos `development` y `test`
+- `backend/tests/setup-env.js` y el bloque `jest` de `backend/package.json`
+- `backend/tests/integration/registro.test.js` — la guarda sobre el nombre de la base
+
+**Beneficios**
+
+- Los tests de integración usan PostgreSQL real, con las mismas migraciones y restricciones que desarrollo.
+- Los datos de desarrollo nunca se tocan, y la guarda lo impide aunque la configuración falle.
+- El cambio fue pequeño y no tocó modelos ni controladores.
+
+**Costos**
+
+- El hallazgo de DIP no se resuelve, se rodea: la conexión sigue siendo global, solo que se elige por entorno. Si en el futuro hiciera falta probar los modelos sin base, habría que volver a la alternativa A.
+- Hay un paso manual más: crear la base de prueba y migrarla cada vez que se agrega una migración. Se documentó en el README y se automatizó en el script `db:migrate:test`.
+- La solución depende de un orden: `setup-env.js` debe ejecutarse antes de cargar los modelos. Por eso está configurado como `setupFiles` y no dentro de los tests.
+
 ---
 
 ## Estado de los hallazgos de diseño
@@ -266,11 +326,15 @@ El Singleton está justificado porque el pool de conexiones debe compartirse, pe
 
 **Criterio de mejora:** revisar la inyección de dependencias junto con la incorporación de pruebas automatizadas, para que la abstracción responda a una necesidad real de testing.
 
-### Hasheo de contraseñas — Pendiente
+**Actualización:** al incorporar las pruebas, la necesidad de testing se resolvió eligiendo la base por configuración, sin inyección de dependencias (ver Caso 4). El hallazgo sigue abierto, pero ahora con un criterio más preciso: introducir la inyección solo si hiciera falta probar los modelos sin una base real.
 
-`bcryptjs` figura en las dependencias, pero el hasheo de contraseñas todavía debe implementarse.
+### Hasheo de contraseñas — Corregido
 
-**Criterio de mejora:** centralizar el hasheo en un hook `beforeSave` de `backend/src/models/usuario.js`, con la guarda `if (usuario.changed('password'))`. Acompañarlo de un `defaultScope` que excluya `password` de las consultas habituales, de modo que el acceso al hash deba solicitarse explícitamente.
+Se implementó tal como indicaba el criterio de mejora: un hook `beforeSave` en `backend/src/models/usuario.js` hashea la contraseña con bcrypt solo cuando cambió (`usuario.changed('password')`), y un `defaultScope` la excluye de las consultas habituales. Para obtener el hash hay que pedirlo explícitamente con el scope `conPassword`, que se usa únicamente en el login.
+
+**Evidencia:** `backend/src/models/usuario.js`.
+
+**Verificación:** `tests/integration/registro.test.js` comprueba, contra la base de prueba, que la contraseña se guarda hasheada y no en texto plano, que la respuesta del registro no incluye la contraseña y que el usuario puede iniciar sesión con la contraseña original.
 
 ### Reimplementación de timestamps — Pendiente
 
@@ -278,9 +342,17 @@ Los modelos declaran `timestamps: false`, y `backend/src/models/reserva.js` inco
 
 **Criterio de mejora:** evaluar la incorporación de fechas de creación y actualización cuando se implemente el módulo de reportes y se definan los requisitos de auditoría para cancelaciones y reprogramaciones.
 
-### Pruebas automatizadas de los middlewares — Pendiente
+### Pruebas automatizadas de los middlewares — Corregido
 
-El proyecto declara `jest` y `supertest` como dependencias de desarrollo, pero todavía no se dispone de una suite de pruebas automatizadas para los middlewares de autenticación y autorización.
+Se automatizaron los cuatro casos del criterio de mejora, y se agregaron el token vencido y el token firmado con otro secreto. Las pruebas cubren dos niveles: unitario, con dobles de prueba para `req`, `res` y `next`, e integración, con peticiones HTTP reales contra la ruta protegida.
+
+**Evidencia:** `backend/tests/unit/autenticar.test.js`, `backend/tests/unit/autorizar.test.js` y `backend/tests/integration/proteccion-rutas.test.js`. La estrategia completa está en `docs/pruebas.md`.
+
+### Variable sin uso en el seeder de usuarios — Corregido
+
+Al incorporar ESLint con las reglas recomendadas, el análisis marcó 21 problemas. Veinte correspondían al parámetro `Sequelize` sin usar en la firma `up(queryInterface, Sequelize)` de migraciones y seeders. Esa firma la genera y la espera `sequelize-cli`, así que se ajustó la regla `no-unused-vars` solo para esos archivos, en lugar de modificar veinte archivos para silenciar al linter. El problema restante era real: una variable `now` que se creaba y nunca se usaba en el seeder de usuarios, y se eliminó.
+
+**Evidencia:** `backend/eslint.config.js`, donde la excepción queda documentada con su motivo, y `backend/src/seeders/20261028223335-usuarios.js`.
 
 **Criterio de mejora:** automatizar los casos de token ausente, token mal formado, token válido con rol permitido y token válido con rol no permitido. Estos componentes son candidatos adecuados para comenzar porque no necesitan una base de datos para verificar su comportamiento.
 
