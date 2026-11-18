@@ -26,13 +26,13 @@ function Sidebar() {
         { nombre: 'Favoritos', Icono: Heart, ruta: '/favoritos' },
         { nombre: 'Mi perfil', Icono: UserRound, ruta: '/perfil' },
     ];
-    
+
     return (
         <aside className="sidebar">
             <div className="sidebar__logo">
                 <img src="/images/logo-picado.png" alt="Picado" />
             </div>
-            
+
             <nav className="sidebar__nav">
                 {opciones.map(({ nombre, Icono, ruta }) => (
                     <NavLink
@@ -47,13 +47,13 @@ function Sidebar() {
                     </NavLink>
                 ))}
             </nav>
-            
+
             <div className="sidebar__inferior">
                 <button className="sidebar__link" type="button">
                     <Settings className="sidebar__icono" size={20} />
                     Configuración
                 </button>
-                
+
                 <button className="sidebar__link" type="button" onClick={salir}>
                     <LogOut className="sidebar__icono" size={20} />
                     Cerrar sesión

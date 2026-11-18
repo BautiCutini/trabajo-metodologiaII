@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     Bell,
@@ -15,6 +15,7 @@ import {
 import LayoutJugador from '../../components/jugador/LayoutJugador';
 import Button from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { actualizarPerfil } from '../../services/auth.service';
 import './Perfil.css';
 
 const ROLES = {
@@ -35,6 +36,33 @@ const OPCIONES = [
 ];
 
 const CLAVE_NOTIFICACIONES = 'picado_notificaciones';
+
+
+function reducirImagen(archivo, lado = 256) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(archivo);
+        const img = new Image();
+
+        img.onload = () => {
+            const corte = Math.min(img.width, img.height);
+            const canvas = document.createElement('canvas');
+            canvas.width = lado;
+            canvas.height = lado;
+            canvas.getContext('2d').drawImage(
+                img,
+                (img.width - corte) / 2, (img.height - corte) / 2, corte, corte,
+                0, 0, lado, lado
+            );
+            URL.revokeObjectURL(url);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('No se pudo leer la imagen'));
+        };
+        img.src = url;
+    });
+}
 
 // Dibujo decorativo de una cancha, de fondo en la tarjeta del usuario.
 function LineasDeCancha() {
@@ -87,11 +115,37 @@ function ContenidoOpcion({ Icono, titulo, detalle, derecha }) {
 }
 
 function Perfil() {
-    const { usuario, cerrarSesion } = useAuth();
+    const { usuario, cerrarSesion, actualizarUsuario } = useAuth();
     const navigate = useNavigate();
+    const inputFoto = useRef(null);
+    const [subiendoFoto, setSubiendoFoto] = useState(false);
+    const [errorFoto, setErrorFoto] = useState('');
     const [notificaciones, setNotificaciones] = useState(
         () => localStorage.getItem(CLAVE_NOTIFICACIONES) !== 'false'
     );
+
+    async function cambiarFoto(e) {
+        const archivo = e.target.files[0];
+        e.target.value = '';
+        if (!archivo) return;
+
+        if (!archivo.type.startsWith('image/')) {
+            setErrorFoto('Elegí un archivo de imagen');
+            return;
+        }
+
+        setErrorFoto('');
+        setSubiendoFoto(true);
+        try {
+            const imagen = await reducirImagen(archivo);
+            const actualizado = await actualizarPerfil({ imagen_url: imagen });
+            actualizarUsuario(actualizado);
+        } catch (error) {
+            setErrorFoto(error.message);
+        } finally {
+            setSubiendoFoto(false);
+        }
+    }
 
     function cambiarNotificaciones(activas) {
         setNotificaciones(activas);
@@ -124,11 +178,19 @@ function Perfil() {
                                 <span aria-hidden="true">{iniciales}</span>
                             )}
                         </div>
+                        <input
+                            ref={inputFoto}
+                            type="file"
+                            accept="image/*"
+                            hidden
+                            onChange={cambiarFoto}
+                        />
                         <button
                             type="button"
                             className="perfil__editar-foto"
-                            aria-label="Editar foto de perfil"
-                            onClick={() => navigate('/perfil/datos')}
+                            aria-label="Cambiar foto de perfil"
+                            disabled={subiendoFoto}
+                            onClick={() => inputFoto.current.click()}
                         >
                             <Pencil size={18} />
                         </button>
@@ -143,6 +205,8 @@ function Perfil() {
                         </span>
                     </div>
                 </div>
+
+                {errorFoto && <p className="perfil__error" role="alert">{errorFoto}</p>}
 
                 <ul className="perfil__opciones">
                     {OPCIONES.map(({ clave, ruta, ...opcion }) => (

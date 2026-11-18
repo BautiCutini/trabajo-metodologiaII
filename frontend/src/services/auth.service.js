@@ -11,3 +11,7 @@ export function registrar(datos) {
 export function obtenerPerfil() {
     return apiFetch('/auth/perfil');
 }
+
+export function actualizarPerfil(datos) {
+    return apiFetch('/auth/perfil', { method: 'PATCH', body: datos });
+}
