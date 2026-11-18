@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon --inspect=0.0.0:9229 src/index.js",
+    "lint": "eslint .",
     "test": "jest",
-    "dev": "nodemon --inspect=0.0.0:9229 src/index.js"
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration --runInBand",
+    "check": "npm run lint && npm test",
+    "db:migrate:test": "NODE_ENV=test sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -22,10 +27,17 @@
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "eslint": "^10.10.0",
+    "globals": "^17.14.0",
     "jest": "^30.5.1",
     "nodemon": "^3.1.14",
     "sequelize-cli": "^6.6.5",
     "supertest": "^7.2.2"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/tests/setup-env.js"
+    ]
   }
 }
