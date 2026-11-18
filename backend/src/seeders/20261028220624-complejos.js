@@ -10,6 +10,8 @@ module.exports = {
         telefono: '2914000001',
         descripcion: 'Complejo deportivo con canchas para alquiler',
         imagen_url: null,
+        latitud: -38.6985,
+        longitud: -62.2710,
         estado: 'ACTIVO'
       },
       {
@@ -18,6 +20,8 @@ module.exports = {
         telefono: '2914000002',
         descripcion: 'Complejo deportivo para fútbol recreativo',
         imagen_url: null,
+        latitud: -38.7390,
+        longitud: -62.2580,
         estado: 'ACTIVO'
       },
       {
@@ -26,6 +30,8 @@ module.exports = {
         telefono: '2914000003',
         descripcion: 'Complejo con instalaciones para actividades deportivas',
         imagen_url: null,
+        latitud: -38.7175,
+        longitud: -62.2655,
         estado: 'ACTIVO'
       }
     ], {});

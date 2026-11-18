@@ -18,6 +18,11 @@ function AppRoutes() {
                 <Route path="/" element={<Inicio />} />
             </Route>
 
+            <Route element={<RutaProtegida />}>
+                <Route path="/" element={<Inicio />} />
+                <Route path="/mapa" element={<Mapa />} />
+            </Route>
+
             {/* Cuando existan los paneles, se agregan así:
             <Route element={<RutaProtegida roles={['ADMIN_PLATAFORMA']} />}>
                 <Route path="/plataforma/usuarios" element={<GestionUsuarios />} />
