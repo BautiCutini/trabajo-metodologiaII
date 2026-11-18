@@ -3,7 +3,7 @@ import RutaProtegida from './RutaProtegida';
 import Inicio from '../pages/jugador/Inicio';
 import Login from '../pages/auth/Login';
 import Registro from '../pages/auth/Registro';
-import Mapa from '../pages/jugador/Mapa';
+import Perfil from '../pages/jugador/Perfil';
 
 function AppRoutes() {
     return (
@@ -14,6 +14,7 @@ function AppRoutes() {
 
             {/* Cualquier usuario logueado */}
             <Route element={<RutaProtegida />}>
+              <Route path="/perfil" element={<Perfil />} />
                 <Route path="/" element={<Inicio />} />
             </Route>
 

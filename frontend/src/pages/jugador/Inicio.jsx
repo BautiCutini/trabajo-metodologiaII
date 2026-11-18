@@ -1,4 +1,6 @@
-import { UserRound, ArrowRight, Lightbulb, CalendarCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { UserRound, ArrowRight, Lightbulb } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import './inicio.css';
 
 import Sidebar from '../../components/jugador/Sidebar';
@@ -9,32 +11,42 @@ import CanchaCard from '../../components/jugador/CanchaCard';
 import ActividadReciente from '../../components/jugador/ActividadReciente';
 
 function Inicio() {
+    const { usuario } = useAuth();
+
     return (
         <div className="inicio-layout">
             <Sidebar />
-            
+
             <main className="inicio">
                 <header className="inicio__header">
                     <div>
                         <h1>Hola, Jugador 👋</h1>
                         <p>¿Listo para jugar?</p>
                     </div>
-                    
-                    <button
+
+                    <Link
+                        to="/perfil"
                         className="inicio__perfil"
                         aria-label="Mi perfil"
                     >
-                        <UserRound size={24} />
-                    </button>
+                        {usuario?.imagen_url ? (
+                            <img
+                                src={usuario.imagen_url}
+                                alt={`Foto de ${usuario.nombre} ${usuario.apellido}`}
+                            />
+                        ) : (
+                            <UserRound size={24} />
+                        )}
+                    </Link>
                 </header>
-                
+
                 <AccesosRapidos />
-                
+
                 <section className="inicio__contenido">
-                
+
                     <div className="inicio__principal">
                         <ProximaReserva />
-                        
+
                         <section className="inicio__recomendadas">
                             <div className="inicio__titulo-seccion">
                                 <h2>Canchas recomendadas</h2>
@@ -42,7 +54,7 @@ function Inicio() {
                                     Ver más <ArrowRight size={17} />
                                 </a>
                             </div>
-                            
+
                             <div className="inicio__grid-canchas">
                                 <CanchaCard />
                                 <CanchaCard />
@@ -50,7 +62,7 @@ function Inicio() {
                             </div>
                         </section>
                     </div>
-                    
+
                     <section className="inicio__promocional">
                         <div className="inicio__promo-texto">
                             <h2>
@@ -58,36 +70,34 @@ function Inicio() {
                                 <br />
                                 y <span>jugá</span>
                             </h2>
-                            
+
                             <p>
                                 Canchas, complejos y tus reservas
                                 en un solo lugar.
                             </p>
                         </div>
                     </section>
-                    
+
                     <aside className="inicio__lateral">
                         <ActividadReciente />
-                        
+
                         <section className="inicio__tip">
                             <div className="inicio__tip-titulo">
                                 <Lightbulb size={25} />
                                 <h3>Tip de Picado</h3>
                             </div>
-                            
+
                             <p>
                                 Podés buscar complejos por fecha
                                 y horario para ver disponibilidad
                                 al instante.
                             </p>
-                            
-                            
                         </section>
                     </aside>
-                    
+
                 </section>
             </main>
-            
+
             <BottomNav />
         </div>
     );
