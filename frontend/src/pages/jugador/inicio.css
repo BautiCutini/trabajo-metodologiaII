@@ -95,7 +95,9 @@ CONTENIDO Y COLUMNAS
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding-top: 150px;
+    padding-top: 107px;
+    align-self: start;
+    margin-top: 0;
 }
 
 /* ========================================
@@ -270,7 +272,8 @@ ACCESOS RAPIDOS
 .accesos-rapidos__grupo {
     display: flex;
     align-items: stretch;
-    gap: 12px;
+    gap: 15px;
+    transform: translateX(25px);
 }
 
 .accesos-rapidos__secundario {
@@ -602,7 +605,7 @@ TARJETAS DE CANCHAS
 
 
 /* ========================================
-   ACTIVIDAD RECIENTE
+ACTIVIDAD RECIENTE
 ======================================== */
 
 .actividad-reciente {
@@ -612,6 +615,7 @@ TARJETAS DE CANCHAS
     background: rgba(20, 55, 42, 0.94);
     box-shadow: var(--shadow-card);
     backdrop-filter: blur(12px);
+    transform: translateX(30px);
 }
 
 /* ENCABEZADO */
@@ -1078,14 +1082,24 @@ RESPONSIVE SIDEBAR
 TARJETA PROMOCIONAL
 ======================================== */
 
+.inicio__columna-promocional {
+    display: flex;
+    flex-direction: column;
+    gap: 150px;
+    min-width: 0;
+}
+
+
 .inicio__promocional {
     position: relative;
     width: 100%;
-    max-width: 470px;
+    max-width: none;
     min-height: 227px;
+    height: 227px;
     margin-top: 110px;
-    margin-left: 20px;
+    margin-left: 0px;
     padding: 22px;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -1127,6 +1141,8 @@ TARJETA PROMOCIONAL
     color: #D0DDD4;
     font-size: clamp(12px, 1vw, 15px);
     line-height: 1.4;
+    margin-top: 20px;
+    max-width: 65%;
 }
 
 /* ========================================
@@ -1164,7 +1180,6 @@ RESPONSIVE
     gap: 24px;
 }
 
-
 /* ========================================
 TIP DE PICADO
 ======================================== */
@@ -1172,29 +1187,32 @@ TIP DE PICADO
 .inicio__tip {
     position: relative;
     width: 100%;
-    max-width: 280px;
-    min-height: 118px;
-    padding: 16px;
+    max-width: none;
+    min-height: 227px;
+    height: 227px;
+    box-sizing: border-box;
+    padding: 22px 16px;
     overflow: hidden;
 
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     justify-content: center;
 
     border: 1px solid rgba(38, 115, 77, 0.7);
     border-radius: 17px;
 
-background-image:
-    linear-gradient(
-        90deg,
-        rgba(0, 20, 12, 0.12),
-        rgba(0, 20, 12, 0)
-    ),
-    url('/images/tip-picado.png');
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(0, 20, 12, 0.12),
+            rgba(0, 20, 12, 0)
+        ),
+        url('/images/tip-picado.png');
 
-background-size: cover;
-background-position: center;
-background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* TÍTULO */
@@ -1202,15 +1220,18 @@ background-repeat: no-repeat;
 .inicio__tip-titulo {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin: 0;
     color: #B9E769;
+    position: relative;
+    top: -5px;
 }
 
 .inicio__tip-titulo h3 {
     color: #FFFFFF;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: clamp(24px, 2vw, 30px);
+    font-weight: 800;
+    line-height: 1.1;
     margin: 0;
 }
 
@@ -1219,11 +1240,13 @@ background-repeat: no-repeat;
 .inicio__tip p {
     position: relative;
     z-index: 1;
-    max-width: 78%;
-    margin: 0;
+    width: 45%;
+    max-width: 260px;
+    margin: 18px 0 0 5px;
+
     color: #E0E9E2;
-    font-size: 12px;
-    line-height: 1.45;
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 /* CALENDARIO */
@@ -1274,4 +1297,10 @@ background-repeat: no-repeat;
 }
 .inicio__principal > .proxima-reserva {
     margin-top: 100px;
+}
+/* SIDEBAR: ocupar toda la altura del contenido */
+.sidebar {
+    height: auto;
+    min-height: 100vh;
+    align-self: stretch;
 }
