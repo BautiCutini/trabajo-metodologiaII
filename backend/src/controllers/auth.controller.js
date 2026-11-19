@@ -90,4 +90,31 @@ async function perfil(req, res) {
     }
 }
 
-module.exports = { registro, login, perfil };
+async function actualizarPerfil(req, res) {
+    try {
+        const usuario = await Usuario.findByPk(req.usuario.id);
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+       
+        const { nombre, apellido, telefono, imagen_url } = req.body;
+
+        if (nombre !== undefined) usuario.nombre = nombre;
+        if (apellido !== undefined) usuario.apellido = apellido;
+        if (telefono !== undefined) usuario.telefono = telefono;
+        if (imagen_url !== undefined) usuario.imagen_url = imagen_url;
+
+        await usuario.save();
+        return res.json(usuarioPublico(usuario));
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: error.errors.map(e => e.message) });
+        }
+        console.error(error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+}
+
+
+module.exports = { registro, login, perfil, actualizarPerfil };
