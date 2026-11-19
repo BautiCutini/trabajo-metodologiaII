@@ -42,10 +42,10 @@ const Usuario = (Sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        imagen_url: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
+     imagen_url: {
+    type: DataTypes.TEXT,
+    allowNull: true
+},
         estado: {
             type: DataTypes.ENUM('ACTIVO', 'INACTIVO'),
             allowNull: false,
