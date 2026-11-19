@@ -68,8 +68,17 @@ async function listar(req, res) {
                 });
             }
             
-            where.usuario_id = usuarioId;
+            if (rol === 'JUGADOR' && usuarioId !== Number(req.usuario.id)) {
+                return res.status(403).json({
+                    error: 'No tenés permiso para consultar reservas de otro usuario'
+                });
+            }
+            
+            if (rol !== 'JUGADOR') {
+                where.usuario_id = usuarioId;
+            }
         }
+        
         
         if (req.query.cancha_id) {
             const canchaId = Number(req.query.cancha_id);
@@ -84,7 +93,29 @@ async function listar(req, res) {
         }
         
         if (req.query.fecha) {
-            where.fecha_turno = req.query.fecha;
+            const fecha = req.query.fecha;
+            
+            if (
+                typeof fecha !== 'string' ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(fecha)
+            ) {
+                return res.status(400).json({
+                    error: 'La fecha debe tener el formato YYYY-MM-DD'
+                });
+            }
+            
+            const fechaValidada = new Date(`${fecha}T00:00:00.000Z`);
+            
+            if (
+                Number.isNaN(fechaValidada.getTime()) ||
+                fechaValidada.toISOString().slice(0, 10) !== fecha
+            ) {
+                return res.status(400).json({
+                    error: 'La fecha ingresada no es válida'
+                });
+            }
+            
+            where.fecha_turno = fecha;
         }
         
         const { rows, count } = await Reserva.findAndCountAll({
@@ -129,24 +160,30 @@ async function obtener(req, res) {
             });
         }
         
-        const rol = req.usuario.rol;
+        const { rol, id: usuarioId, complejo_id } = req.usuario;
         
-        const reserva = await Reserva.findByPk(id, {
+        const where = { id };
+        
+        if (rol === 'JUGADOR') {
+            where.usuario_id = usuarioId;
+        }
+        
+        const esPersonalComplejo = ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol);
+        
+        const reserva = await Reserva.findOne({
+            where,
             include: [
                 { model: Usuario },
                 {
                     model: Cancha,
-                    where: ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol)
-                        ? { complejo_id: req.usuario.complejo_id }
+                    where: esPersonalComplejo
+                        ? { complejo_id }
                         : undefined,
-                    required: ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol),
+                    required: esPersonalComplejo,
                     include: [{ model: Complejo }]
                 },
                 { model: Horario }
-            ],
-            where: rol === 'JUGADOR'
-                ? { usuario_id: req.usuario.id }
-                : undefined
+            ]
         });
         
         if (!reserva) {
@@ -158,7 +195,7 @@ async function obtener(req, res) {
         return res.json(reserva);
     
     } catch (error) {
-        console.error(error);
+        console.error('Error al obtener la reserva:', error);
         
         return res.status(500).json({
             error: 'Error interno del servidor'
@@ -169,10 +206,33 @@ async function obtener(req, res) {
 async function crear(req, res) {
     try {
         const {
-            fecha_turno,
-            cancha_id,
-            horario_id
+        fecha_turno,
+        cancha_id,
+        horario_id,
+        nombre_contacto,
+        telefono_contacto
         } = req.body;
+        
+        const {id: usuarioId, rol, complejo_id } = req.usuario;
+        
+        if (!['JUGADOR', 'ENCARGADO'].includes(rol)) {
+            return res.status(403).json({
+                error: 'No tenés permiso para crear reservas'
+            });
+        }
+        
+        if (rol === 'ENCARGADO') {
+            if (
+                typeof nombre_contacto !== 'string' ||
+                !nombre_contacto.trim() ||
+                typeof telefono_contacto !== 'string' ||
+                !telefono_contacto.trim()
+            ) {
+                return res.status(400).json({
+                    error: 'El nombre y teléfono del cliente son obligatorios'
+                });
+            }
+        }
         
         const canchaId = Number(cancha_id);
         const horarioId = Number(horario_id);
@@ -223,6 +283,15 @@ async function crear(req, res) {
             });
         }
         
+        if (
+            rol === 'ENCARGADO' &&
+            Number(cancha.complejo_id) !== Number(complejo_id)
+        ) {
+            return res.status(403).json({
+                error: 'No tenés permiso para reservar en otro complejo'
+            });
+        }
+        
         if (cancha.estado !== 'ACTIVO') {
             return res.status(400).json({
                 error: 'La cancha no está activa'
@@ -243,7 +312,7 @@ async function crear(req, res) {
             });
         }
         
-        if (horario.cancha_id !== canchaId) {
+        if (Numer(horario.cancha_id) !== canchaId) {
             return res.status(400).json({
                 error: 'El horario no pertenece a la cancha seleccionada'
             });
@@ -251,7 +320,7 @@ async function crear(req, res) {
         
         const diaSemana = fecha.getUTCDay();
         
-        if (horario.dia_semana !== diaSemana) {
+        if (Number(horario.dia_semana) !== diaSemana) {
             return res.status(400).json({
                 error: 'El horario no corresponde al día seleccionado'
             });
@@ -291,7 +360,13 @@ async function crear(req, res) {
             hora_inicio: horario.hora_inicio,
             hora_fin: horario.hora_fin,
             estado: 'PENDIENTE',
-            usuario_id: req.usuario.id,
+            usuario_id: rol === 'JUGADOR' ? usuarioId : null,
+            nombre_contacto: rol === 'ENCARGADO'
+                ? nombre_contacto.trim()
+                : null,
+            telefono_contacto: rol === 'ENCARGADO'
+                ? telefono_contacto.trim()
+                : null,
             cancha_id: canchaId,
             horario_id: horarioId
         });
@@ -340,7 +415,10 @@ async function cancelar(req, res) {
         
         const { id: usuarioId, rol, complejo_id } = req.usuario;
         
-        if (rol === 'JUGADOR' && reserva.usuario_id !== usuarioId) {
+        if (
+            rol === 'JUGADOR' &&
+            Number(reserva.usuario_id) !== Number(usuarioId)
+        ) {
             return res.status(403).json({
                 error: 'No tenés permiso para cancelar esta reserva'
             });
@@ -348,7 +426,7 @@ async function cancelar(req, res) {
         
         if (
             ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol) &&
-            reserva.Cancha.complejo_id !== complejo_id
+            Number(reserva.Cancha.complejo_id) !== complejo_id
         ) {
             return res.status(403).json({
                 error: 'No tenés permiso para cancelar reservas de otro complejo'
@@ -417,6 +495,17 @@ async function disponibilidad(req, res) {
         if (!cancha) {
             return res.status(404).json({
                 error: 'Cancha no encontrada'
+            });
+        }
+        
+        const { rol, complejo_id } = req.usuario;
+        
+        if (
+            ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol) &&
+            Number(cancha.complejo_id) !== Number(complejo_id)
+        ) {
+            return res.status(403).json({
+                error: 'No tenés permiso para consultar la disponibilidad de otro complejo'
             });
         }
         

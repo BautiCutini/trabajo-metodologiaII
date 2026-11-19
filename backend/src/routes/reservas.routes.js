@@ -45,9 +45,9 @@ router.get(
 
 
 router.post(
-    '/',
-    autenticar,
-    autorizar('JUGADOR'),
+    '/', 
+    autenticar, 
+    autorizar('JUGADOR', 'ENCARGADO'),
     crear
 );
 
