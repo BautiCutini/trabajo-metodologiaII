@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const app = require('./app');
 const { sequelize } = require('./models');
+const reservasRoutes = require('./routes/reservas.routes');
 
 async function iniciarServidor() {
     try {
@@ -17,7 +18,9 @@ async function iniciarServidor() {
         console.error('No se pudo conectar a la base de datos:', error);
         process.exit(1);
     }
+    
+    app.use('/api/v1/reservas', reservasRoutes);
+    
 }
 
 iniciarServidor();
-

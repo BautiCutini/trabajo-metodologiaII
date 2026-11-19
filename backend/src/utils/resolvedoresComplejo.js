@@ -42,6 +42,7 @@ async function complejoDelHorario(req) {
 }
 
 module.exports = {
+    complejoDeCancha,
     complejoDeLaRuta,
     complejoDeLaCancha,
     complejoDeLaCanchaDelBody,

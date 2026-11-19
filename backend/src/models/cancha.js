@@ -22,7 +22,7 @@ const Cancha = (Sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-
+            
         precio: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
@@ -42,7 +42,7 @@ const Cancha = (Sequelize) => {
             allowNull: false,
             defaultValue: 'ACTIVO'
         }
-    
+        
         }, {
             tableName: 'canchas',
             timestamps: false,
