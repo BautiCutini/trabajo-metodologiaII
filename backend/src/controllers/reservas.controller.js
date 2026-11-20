@@ -312,7 +312,7 @@ async function crear(req, res) {
             });
         }
         
-        if (Numer(horario.cancha_id) !== canchaId) {
+        if (Number(horario.cancha_id) !== canchaId) {
             return res.status(400).json({
                 error: 'El horario no pertenece a la cancha seleccionada'
             });
