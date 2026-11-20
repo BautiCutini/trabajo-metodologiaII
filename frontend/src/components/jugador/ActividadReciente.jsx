@@ -1,69 +1,78 @@
 import {
-    CircleCheck,
-    Trophy,
-    CircleX,
-    Activity,
+    Layers,
+    Bell,
+    RefreshCw,
+    CalendarDays,
+    CalendarX,
+    MessageCircle,
     ChevronRight,
 } from 'lucide-react';
 
 function ActividadReciente() {
-    const actividades = [
+    const opciones = [
         {
             id: 1,
-            tipo: 'confirmada',
-            Icono: CircleCheck,
-            titulo: 'Reserva confirmada',
-            descripcion: 'Complejo Deportivo Norte · Cancha 2',
-            fecha: 'Hoy · 10:35',
+            Icono: Bell,
+            titulo: 'Notificaciones',
+            descripcion: 'Enterate de confirmaciones, cambios y novedades.',
         },
         {
             id: 2,
-            tipo: 'realizada',
-            Icono: Trophy,
-            titulo: 'Partido realizado',
-            descripcion: 'Complejo Los Amigos · Cancha 1',
-            fecha: 'Ayer · 19:00',
+            Icono: RefreshCw,
+            titulo: 'Repetir reserva',
+            descripcion: 'Volvé a reservar una cancha con tus datos anteriores.',
         },
         {
             id: 3,
-            tipo: 'cancelada',
-            Icono: CircleX,
-            titulo: 'Reserva cancelada',
-            descripcion: 'Complejo Deportivo Sur · Cancha 3',
-            fecha: '12 de noviembre',
+            Icono: CalendarDays,
+            titulo: 'Historial de reservas',
+            descripcion: 'Consultá todas tus reservas, pasadas y futuras.',
+        },
+        {
+            id: 4,
+            Icono: CalendarX,
+            titulo: 'Cancelaciones',
+            descripcion: 'Revisá tus reservas canceladas y sus motivos.',
+        },
+        {
+            id: 5,
+            Icono: MessageCircle,
+            titulo: 'Reclamos y consultas',
+            descripcion: 'Realizá consultas o reclamos y seguí su estado.',
         },
     ];
-    
+
     return (
-        <section className="actividad-reciente">
-            <div className="actividad-reciente__encabezado">
-                <Activity size={22} />
-                <h2>Actividad reciente</h2>
-            </div>
-            
-            <div className="actividad-reciente__lista">
-                {actividades.map(({ id, tipo, Icono, titulo, descripcion, fecha }) => (
+        <section className="centro-actividad">
+            <header className="centro-actividad__encabezado">
+                <span className="centro-actividad__icono-principal">
+                    <Layers size={34} />
+                </span>
+
+                <div>
+                    <h2>Centro de actividad</h2>
+                    <p>Gestioná tus reservas y consultas en un solo lugar.</p>
+                </div>
+            </header>
+
+            <div className="centro-actividad__lista">
+                {opciones.map(({ id, Icono, titulo, descripcion }) => (
                     <article
                         key={id}
-                        className="actividad-reciente__item"
+                        className="centro-actividad__item"
                     >
-                        <span
-                            className={`actividad-reciente__icono actividad-reciente__icono--${tipo}`}
-                        >
-                            <Icono size={22} />
+                        <span className="centro-actividad__icono">
+                            <Icono size={30} />
                         </span>
-                        
-                        <div className="actividad-reciente__datos">
+
+                        <div className="centro-actividad__datos">
                             <h3>{titulo}</h3>
                             <p>{descripcion}</p>
-                            <span className="actividad-reciente__fecha">
-                                {fecha}
-                            </span>
                         </div>
-                        
+
                         <ChevronRight
-                            className="actividad-reciente__flecha"
-                            size={21}
+                            className="centro-actividad__flecha"
+                            size={28}
                         />
                     </article>
                 ))}
