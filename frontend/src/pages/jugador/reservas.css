@@ -1,0 +1,86 @@
+.reservas {
+    position: relative;
+    z-index: 1;
+
+    /* Extender el fondo hasta los bordes del contenido */
+    min-height: 100vh;
+    margin: -32px -44px;
+    padding: 32px 44px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            rgba(5, 20, 13, 0.15),
+            rgba(5, 20, 13, 0.30)
+        ),
+        url("/images/fondo-reservas.png") center / cover no-repeat;
+}
+
+/* ==============================
+   TIPOGRAFÍA - RESERVAS
+============================== */
+
+/* Título principal */
+.reservas .reservas__encabezado h1 {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin: 0 0 10px;
+
+    color: #ffffff;
+    font-size: clamp(2.2rem, 3vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.45);
+}
+
+/* Detalle verde del título */
+.reservas .reservas__decoracion {
+    color: #b9e769;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -5px;
+    text-shadow: 0 0 12px rgba(185, 231, 105, 0.35);
+}
+
+/* Subtítulo */
+.reservas .reservas__encabezado p {
+    margin: 0;
+
+    color: #e0e9e3;
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    line-height: 1.6;
+
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Texto del selector de ciudad */
+.reservas .reservas__selector-ciudad span {
+    color: #f1f5f2;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Texto del botón de filtros */
+.reservas .reservas__boton-filtros span {
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* Mensaje central */
+.reservas .reservas__estado-vacio p {
+    color: #e2ebe5;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.8;
+    letter-spacing: 0.15px;
+
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}

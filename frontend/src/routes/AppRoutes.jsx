@@ -5,6 +5,7 @@ import Login from '../pages/auth/Login';
 import Registro from '../pages/auth/Registro';
 import Perfil from '../pages/jugador/Perfil';
 import Mapa from '../pages/jugador/Mapa'; 
+import Reservas from '../pages/jugador/Reservas';
 
 function AppRoutes() {
     return (
@@ -31,6 +32,11 @@ function AppRoutes() {
             */}
 
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route element={<RutaProtegida />}>
+                <Route path="/perfil" element={<Perfil />} />
+                <Route path="/" element={<Inicio />} />
+                <Route path="/reservar" element={<Reservas />} />
+            </Route>
         </Routes>
     );
 }
