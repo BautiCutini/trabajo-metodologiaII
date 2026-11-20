@@ -49,22 +49,7 @@ function Reservas() {
                 
                 </div>
                 
-                {/* Estado inicial */}
-                <div className="reservas__estado-vacio">
-                
-                    <div className="reservas__icono-cancha">
-                        <Goal />
-                    </div>
-                    
-                    <p>
-                        Elegí una ciudad y aplicá filtros
-                        <br />
-                        para descubrir complejos.
-                    </p>
-                    
-                    <span className="reservas__acento" />
-                
-                </div>
+            
             
             </section>
         </LayoutJugador>

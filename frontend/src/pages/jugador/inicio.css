@@ -1087,6 +1087,7 @@ TARJETA PROMOCIONAL
     flex-direction: column;
     gap: 150px;
     min-width: 0;
+    transform: translateX(12px);
 }
 
 
@@ -1304,3 +1305,373 @@ TIP DE PICADO
     min-height: 100vh;
     align-self: stretch;
 }
+
+/* ========================================
+CENTRO DE ACTIVIDAD
+======================================== */
+
+.centro-actividad {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid rgba(185, 231, 105, 0.65);
+    border-radius: 22px;
+    background:
+    linear-gradient(
+        rgba(0, 20, 12, 0.30),
+        rgba(0, 20, 12, 0.30)
+    ),
+    url('/images/centro-actividad-fondo.png');
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow:
+        0 0 12px rgba(185, 231, 105, 0.12),
+        inset 0 0 25px rgba(38, 115, 77, 0.12);
+    backdrop-filter: blur(14px);
+    transform: translateX(30px);
+    min-height: 600px;
+    height: 610px;
+}
+
+/* ENCABEZADO */
+
+.centro-actividad__encabezado {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(185, 231, 105, 0.35);
+}
+
+.centro-actividad__icono-principal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    color: #B9E769;
+    border-right: 1px solid rgba(185, 231, 105, 0.5);
+    padding-right: 12px;
+}
+
+.centro-actividad__encabezado h2 {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: clamp(18px, 1.5vw, 23px);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.centro-actividad__encabezado p {
+    margin: 6px 0 0;
+    color: #D0DDD4;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* LISTA DE OPCIONES */
+
+.centro-actividad__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* CADA OPCIÓN */
+
+.centro-actividad__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 76px;
+    padding: 12px;
+    box-sizing: border-box;
+
+    border: 1px solid rgba(38, 115, 77, 0.85);
+    border-radius: 17px;
+
+    background: linear-gradient(
+        110deg,
+        rgba(0, 48, 27, 0.88),
+        rgba(0, 25, 17, 0.96)
+    );
+
+    box-shadow:
+        inset 0 0 12px rgba(38, 115, 77, 0.10),
+        0 0 8px rgba(185, 231, 105, 0.04);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+/* ICONO DE CADA OPCIÓN */
+
+.centro-actividad__icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+
+    color: #C8F77A;
+    border: 1px solid #B9E769;
+    border-radius: 14px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(38, 115, 77, 0.75),
+        rgba(0, 35, 20, 0.95)
+    );
+
+    box-shadow:
+        0 0 10px rgba(185, 231, 105, 0.22),
+        inset 0 0 10px rgba(185, 231, 105, 0.12);
+}
+
+/* TEXTO */
+
+.centro-actividad__datos {
+    flex: 1;
+    min-width: 0;
+}
+
+.centro-actividad__datos h3 {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.centro-actividad__datos p {
+    margin: 5px 0 0;
+    color: #D0DDD4;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* FLECHA */
+
+.centro-actividad__flecha {
+    flex-shrink: 0;
+    color: #FFFFFF;
+}
+
+/* EFECTO VISUAL */
+
+.centro-actividad__item:hover {
+    border-color: #B9E769;
+    box-shadow:
+        0 0 14px rgba(185, 231, 105, 0.22),
+        inset 0 0 14px rgba(185, 231, 105, 0.08);
+    transform: translateY(-2px);
+}
+
+/* TABLET */
+
+@media (max-width: 1200px) {
+    .centro-actividad {
+        transform: none;
+    }
+}
+
+/* MÓVIL */
+
+@media (max-width: 700px) {
+    .centro-actividad {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .centro-actividad__encabezado {
+        gap: 12px;
+    }
+
+    .centro-actividad__encabezado h2 {
+        font-size: 20px;
+    }
+
+    .centro-actividad__item {
+        min-height: 78px;
+        padding: 10px;
+    }
+
+    .centro-actividad__icono {
+        width: 48px;
+        height: 48px;
+    }
+
+    .centro-actividad__datos h3 {
+        font-size: 14px;
+    }
+
+    .centro-actividad__datos p {
+        font-size: 11px;
+    }
+}
+
+/* BRILLO NEÓN DEL CENTRO DE ACTIVIDAD */
+
+
+.centro-actividad {
+    position: relative;
+    isolation: isolate;
+    border: 1px solid #C8FF43;
+
+    box-shadow:
+        0 0 5px #C8FF43,
+        0 0 12px rgba(185, 255, 40, 0.9),
+        0 0 25px rgba(120, 255, 0, 0.55),
+        0 0 45px rgba(120, 255, 0, 0.25),
+        inset 0 0 8px rgba(185, 255, 40, 0.35);
+}
+
+
+
+
+.centro-actividad__item {
+    border: 1px solid rgba(95, 210, 75, 0.9);
+
+    box-shadow:
+        0 0 5px rgba(65, 255, 90, 0.25),
+        0 0 12px rgba(65, 255, 90, 0.12),
+        inset 0 0 10px rgba(65, 255, 90, 0.12);
+
+    transition: all 0.3s ease;
+}
+
+.centro-actividad__item:hover {
+    border-color: #D5FF65;
+
+    box-shadow:
+        0 0 8px #B9E769,
+        0 0 18px rgba(185, 255, 40, 0.65),
+        0 0 30px rgba(120, 255, 0, 0.3),
+        inset 0 0 15px rgba(185, 255, 40, 0.2);
+}
+
+
+.centro-actividad__item:hover {
+    border-color: #B9E769;
+
+    box-shadow:
+        0 0 7px rgba(185, 231, 105, 0.65),
+        0 0 16px rgba(120, 255, 30, 0.30),
+        inset 0 0 12px rgba(185, 231, 105, 0.16);
+}
+
+
+.centro-actividad__icono {
+    border: 1px solid #D5FF65;
+
+    box-shadow:
+        0 0 6px #C8FF43,
+        0 0 14px rgba(185, 255, 40, 0.85),
+        0 0 25px rgba(120, 255, 0, 0.4),
+        inset 0 0 12px rgba(185, 255, 40, 0.3);
+}
+
+
+/* ========================================
+NEÓN INTENSO - IGUAL AL CENTRO DE ACTIVIDAD
+======================================== */
+
+.inicio__promocional,
+.inicio__tip,
+.proxima-reserva__contenido,
+.cancha-card,
+.accesos-rapidos__secundario {
+    border-color: #C8FF43 !important;
+
+    box-shadow:
+        0 0 5px #C8FF43,
+        0 0 12px rgba(185, 255, 40, 0.9),
+        0 0 25px rgba(120, 255, 0, 0.55),
+        0 0 45px rgba(120, 255, 0, 0.25),
+        inset 0 0 8px rgba(185, 255, 40, 0.35) !important;
+}
+
+/* NEÓN MÁS INTENSO AL INTERACTUAR */
+
+.inicio__promocional:hover,
+.inicio__tip:hover,
+.proxima-reserva__contenido:hover,
+.cancha-card:hover,
+.accesos-rapidos__secundario:hover {
+    border-color: #E5FF8A !important;
+
+    box-shadow:
+        0 0 7px #E5FF8A,
+        0 0 16px rgba(185, 255, 40, 1),
+        0 0 32px rgba(120, 255, 0, 0.75),
+        0 0 50px rgba(120, 255, 0, 0.4),
+        inset 0 0 12px rgba(185, 255, 40, 0.45) !important;
+}
+
+
+
+
+/* ========================================
+CANCHAS RECOMENDADAS - TARJETAS COMPACTAS
+======================================== */
+
+.inicio__recomendadas {
+    width: 100%;
+    margin-top: 117px;
+    max-width: none;
+}
+
+.inicio__grid-canchas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+}
+
+/* Imagen panorámica y más baja */
+.cancha-card__imagen-contenedor {
+    height: 100px;
+}
+
+/* Reducir el espacio interior */
+.cancha-card__contenido {
+    padding: 8px;
+}
+
+.cancha-card__contenido h3 {
+    font-size: 0.95rem;
+    line-height: 1.25;
+    margin: 0;
+}
+
+/* Ubicación más compacta */
+.cancha-card__ubicacion {
+    margin-top: 2px;
+    gap: 4px;
+    font-size: 0.78rem;
+    line-height: 1.3;
+}
+
+/* Precio y botón más juntos */
+.cancha-card__pie {
+    margin-top: 5px;
+    gap: 6px;
+}
+
+.cancha-card__precio {
+    font-size: 0.9rem;
+}
+
+.cancha-card__boton {
+    padding: 6px 9px;
+    font-size: 0.9rem;
+}
+
+
