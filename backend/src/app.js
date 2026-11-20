@@ -6,6 +6,7 @@ const complejosRoutes = require('./routes/complejos.routes');
 const canchasRoutes = require('./routes/canchas.routes');
 const horariosRoutes = require('./routes/horarios.routes');
 const pagosRoutes = require('./routes/pagos.routes');
+const reservasRoutes = require('./routes/reservas.routes');
 
 // arma la aplicacion Express sin ponerla a escuchar
 // asi los tests pueden usarla con Supertest sin abrir un puerto
@@ -22,5 +23,6 @@ app.use('/api/v1/complejos', complejosRoutes);
 app.use('/api/v1/canchas', canchasRoutes);
 app.use('/api/v1/horarios', horariosRoutes);
 app.use('/api/v1/pagos', pagosRoutes);
+app.use('/api/v1/reservas', reservasRoutes);
 
 module.exports = app;

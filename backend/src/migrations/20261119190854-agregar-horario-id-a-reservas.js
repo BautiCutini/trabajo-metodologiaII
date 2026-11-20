@@ -45,6 +45,14 @@ module.exports = {
                 ALTER TABLE reservas
                 DROP CONSTRAINT IF EXISTS reservas_horario_id_fkey;
             `, { transaction });
+
+            
+            // En bases creadas desde cero esta restricción ya existe
+            // (la crea 20261014031039-update-attributes-and-foreign-keys.js)
+            await queryInterface.sequelize.query(`
+                ALTER TABLE reservas
+                DROP CONSTRAINT IF EXISTS fk_reservas_horario_cancha;
+            `, { transaction });
             
             await queryInterface.sequelize.query(`
                 ALTER TABLE reservas
