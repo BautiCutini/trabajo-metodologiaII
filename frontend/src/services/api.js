@@ -21,6 +21,17 @@ export function borrarToken() {
     localStorage.removeItem(CLAVE_TOKEN);
 }
 
+export function armarQuery(parametros = {}) {
+    const query = new URLSearchParams();
+    Object.entries(parametros).forEach(([clave, valor]) => {
+        if (valor !== '' && valor !== undefined && valor !== null) {
+            query.set(clave, valor);
+        }
+    });
+    const texto = query.toString();
+    return texto ? `?${texto}` : '';
+}
+
 export async function apiFetch(ruta, { method = 'GET', body } = {}) {
     const headers = { 'Content-Type': 'application/json' };
     const token = leerToken();

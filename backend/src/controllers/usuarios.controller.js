@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const { Usuario, Complejo } = require('../models');
 const usuarioPublico = require('../utils/usuarioPublico');
+const { contieneSinAcentos } = require('../utils/busqueda');
 
 const ROLES = ['JUGADOR', 'ENCARGADO', 'ADMIN_COMPLEJO', 'ADMIN_PLATAFORMA'];
 const ESTADOS = ['ACTIVO', 'INACTIVO'];
@@ -13,6 +14,7 @@ function esEmailValido(email) {
     return typeof email === 'string' &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
+
 
 // aca me aseguro que el valor sea un string y que no sea vacio.
 function esTextoValido(valor) {
@@ -56,10 +58,11 @@ async function listar(req, res) {
         const where = {};
         
         // "nombre" busca tanto en el nombre como en el apellido
+        // Sin distinguir mayúsculas ni acentos: "maria" encuentra a "María"
         if (nombre) {
             where[Op.or] = [
-                { nombre: { [Op.iLike]: `%${nombre}%` } },
-                { apellido: { [Op.iLike]: `%${nombre}%` } }
+                contieneSinAcentos('Usuario.nombre', nombre),
+                contieneSinAcentos('Usuario.apellido', nombre)
             ];
         }
         if (email) {
@@ -92,6 +95,8 @@ async function listar(req, res) {
         
         const { rows, count } = await Usuario.findAndCountAll({
             where,
+            // Trae el nombre del complejo para mostrarlo en el listado
+            include: [{ model: Complejo, attributes: ['id', 'nombre'] }],
             order: [[sortBy, order]],
             limit,
             offset

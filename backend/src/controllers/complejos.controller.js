@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const { Complejo, Cancha } = require('../models');
 const { leerPaginacion, respuestaPaginada } = require('../utils/paginacion');
+const { contieneSinAcentos } = require('../utils/busqueda');
 
 const CAMPOS_ORDENABLES = ['id', 'nombre'];
 const CAMPOS_EDITABLES = ['nombre', 'direccion', 'telefono', 'descripcion', 'imagen_url','latitud', 'longitud', 'estado'];
@@ -15,6 +16,35 @@ async function listar(req, res) {
         const where = { estado: 'ACTIVO' };
         if (req.query.nombre) {
             where.nombre = { [Op.iLike]: `%${req.query.nombre}%` };
+        }
+
+        const { rows, count } = await Complejo.findAndCountAll({ where, order, limit, offset });
+
+        return res.json(respuestaPaginada(rows, count, page, limit));
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
+    }
+}
+
+// Listado completo para el administrador de la plataforma: incluye los complejos dados de baja.
+async function listarTodos(req, res) {
+    try {
+        const { page, limit, offset, order } = leerPaginacion(req.query, CAMPOS_ORDENABLES, 'nombre');
+
+        const where = {};
+        if (req.query.nombre) {
+            where[Op.or] = [
+                contieneSinAcentos('Complejo.nombre', req.query.nombre),
+                contieneSinAcentos('Complejo.direccion', req.query.nombre)
+            ];
+        }
+        if (req.query.estado) {
+            const estado = String(req.query.estado).toUpperCase();
+            if (!ESTADOS.includes(estado)) {
+                return res.status(400).json({ error: `Estado inválido. Valores posibles: ${ESTADOS.join(', ')}` });
+            }
+            where.estado = estado;
         }
 
         const { rows, count } = await Complejo.findAndCountAll({ where, order, limit, offset });
@@ -162,4 +192,4 @@ async function eliminar(req, res) {
     }
 }
 
-module.exports = { listar, obtener, crear, actualizar, eliminar };
+module.exports = { listar, listarTodos, obtener, crear, actualizar, eliminar };
