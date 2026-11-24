@@ -1,19 +1,32 @@
 import { useEffect, useState } from 'react';
-import { Search, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Plus, Pencil } from 'lucide-react';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import FormularioUsuario from './FormularioUsuario';
+import { useAuth } from '../../context/AuthContext';
 import { listarUsuarios } from '../../services/usuario.service';
+import { listarComplejos } from '../../services/complejo.service';
 import { NOMBRE_ROL, ROLES } from '../../utils/roles';
 import styles from './Usuarios.module.css';
 
 const POR_PAGINA = 10;
 
 function Usuarios() {
+    const { usuario: usuarioActual } = useAuth();
+
     // Lo que el usuario está escribiendo en el buscador
     const [busqueda, setBusqueda] = useState('');
     // Los filtros que realmente se mandan al back
     const [filtros, setFiltros] = useState({ nombre: '', rol: '', estado: '' });
     const [pagina, setPagina] = useState(1);
+    // Se incrementa para volver a pedir la misma página después de guardar
+    const [recarga, setRecarga] = useState(0);
+
+    // Modal de alta o edición: usuario null significa "nuevo"
+    const [modal, setModal] = useState({ abierto: false, usuario: null });
+    const [aviso, setAviso] = useState('');
+    const [complejos, setComplejos] = useState([]);
     // La última respuesta del back, junto con la consulta que la pidió
     const [respuesta, setRespuesta] = useState({
         consulta: null,
@@ -24,7 +37,7 @@ function Usuarios() {
     });
 
     // Identifica la consulta actual: si cambia un filtro o la página, es otra consulta
-    const consulta = JSON.stringify({ ...filtros, pagina });
+    const consulta = JSON.stringify({ ...filtros, pagina, recarga });
     // Está cargando mientras la respuesta que tenemos sea de una consulta anterior
     const cargando = respuesta.consulta !== consulta;
 
@@ -56,6 +69,32 @@ function Usuarios() {
         };
     }, [consulta]);
 
+    // Los complejos activos, para el selector del formulario. Se piden una sola vez
+    useEffect(() => {
+        listarComplejos()
+            .then(setComplejos)
+            .catch(() => setComplejos([]));
+    }, []);
+
+    function abrirAlta() {
+        setModal({ abierto: true, usuario: null });
+    }
+
+    function abrirEdicion(usuario) {
+        setModal({ abierto: true, usuario });
+    }
+
+    function cerrarModal() {
+        setModal({ abierto: false, usuario: null });
+    }
+
+    function alGuardar(mensaje) {
+        cerrarModal();
+        setRecarga((valor) => valor + 1);
+        setAviso(mensaje);
+        setTimeout(() => setAviso(''), 4000);
+    }
+
     function cambiarFiltro(evento) {
         const { name, value } = evento.target;
         setFiltros((previos) => ({ ...previos, [name]: value }));
@@ -69,11 +108,23 @@ function Usuarios() {
     return (
         <section className={styles.pagina}>
             <header className={styles.encabezado}>
-                <h1 className={styles.titulo}>Usuarios</h1>
-                <p className={styles.subtitulo}>
-                    Gestioná las cuentas de jugadores, encargados y administradores.
-                </p>
+                <div>
+                    <h1 className={styles.titulo}>Usuarios</h1>
+                    <p className={styles.subtitulo}>
+                        Gestioná las cuentas de jugadores, encargados y administradores.
+                    </p>
+                </div>
+                <Button iconoIzquierda={<Plus size={20} />} onClick={abrirAlta}>
+                    Nuevo usuario
+                </Button>
             </header>
+
+            {aviso && (
+                <div className={styles.aviso} role="status">
+                    <CheckCircle2 size={18} aria-hidden="true" />
+                    <span>{aviso}</span>
+                </div>
+            )}
 
             <div className={styles.filtros}>
                 <Input
@@ -121,6 +172,7 @@ function Usuarios() {
                             <th scope="col">Rol</th>
                             <th scope="col">Complejo</th>
                             <th scope="col">Estado</th>
+                            <th scope="col"><span className={styles.oculto}>Acciones</span></th>
                         </tr>
                     </thead>
                     <tbody className={cargando ? styles.cargando : ''}>
@@ -139,12 +191,22 @@ function Usuarios() {
                                         {usuario.estado === 'ACTIVO' ? 'Activo' : 'Inactivo'}
                                     </span>
                                 </td>
+                                <td className={styles.celdaAcciones}>
+                                    <button
+                                        type="button"
+                                        className={styles.accion}
+                                        onClick={() => abrirEdicion(usuario)}
+                                        aria-label={`Editar a ${usuario.nombre} ${usuario.apellido}`}
+                                    >
+                                        <Pencil size={18} />
+                                    </button>
+                                </td>
                             </tr>
                         ))}
 
                         {!cargando && usuarios.length === 0 && (
                             <tr>
-                                <td colSpan={4} className={styles.vacio}>
+                                <td colSpan={5} className={styles.vacio}>
                                     No hay usuarios que coincidan con la búsqueda.
                                 </td>
                             </tr>
@@ -177,6 +239,20 @@ function Usuarios() {
                     </Button>
                 </div>
             </footer>
+
+            <Modal
+                abierto={modal.abierto}
+                titulo={modal.usuario ? 'Editar usuario' : 'Nuevo usuario'}
+                onCerrar={cerrarModal}
+            >
+                <FormularioUsuario
+                    usuario={modal.usuario}
+                    esUnoMismo={modal.usuario?.id === usuarioActual.id}
+                    complejos={complejos}
+                    onGuardado={alGuardar}
+                    onCancelar={cerrarModal}
+                />
+            </Modal>
         </section>
     );
 }
