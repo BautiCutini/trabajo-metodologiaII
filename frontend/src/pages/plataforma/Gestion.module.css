@@ -132,7 +132,7 @@
     font-weight: var(--font-semibold);
 }
 
-.email {
+.secundario {
     display: block;
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);

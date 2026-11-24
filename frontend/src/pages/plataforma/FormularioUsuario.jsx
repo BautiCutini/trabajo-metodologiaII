@@ -5,7 +5,7 @@ import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { crearUsuario, actualizarUsuario } from '../../services/usuario.service';
 import { NOMBRE_ROL, ROLES, ROLES_CON_COMPLEJO } from '../../utils/roles';
-import styles from './FormularioUsuario.module.css';
+import styles from './Formulario.module.css';
 
 const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

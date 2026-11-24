@@ -1,19 +1,7 @@
-import { apiFetch } from './api';
-
-// Arma "?nombre=juan&rol=JUGADOR" salteando los filtros vacíos
-function aQuery(parametros) {
-    const query = new URLSearchParams();
-    Object.entries(parametros).forEach(([clave, valor]) => {
-        if (valor !== '' && valor !== undefined && valor !== null) {
-            query.set(clave, valor);
-        }
-    });
-    const texto = query.toString();
-    return texto ? `?${texto}` : '';
-}
+import { apiFetch, armarQuery } from './api';
 
 export function listarUsuarios(parametros = {}) {
-    return apiFetch(`/usuarios${aQuery(parametros)}`);
+    return apiFetch(`/usuarios${armarQuery(parametros)}`);
 }
 
 export function obtenerUsuario(id) {

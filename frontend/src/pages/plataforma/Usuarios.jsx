@@ -1,28 +1,23 @@
-import { useEffect, useRef , useState } from 'react';
-import { Search, UserX , UserCheck , ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Plus, Pencil } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Search, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Plus, Pencil, UserX, UserCheck } from 'lucide-react';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
+import ConfirmarCambioEstado from '../../components/panel/ConfirmarCambioEstado';
 import FormularioUsuario from './FormularioUsuario';
-import ConfirmarCambioEstado from './ConfirmarCambioEstado';
 import { useAuth } from '../../context/AuthContext';
-import { listarUsuarios } from '../../services/usuario.service';
+import { useListado } from '../../hooks/useListado';
+import { listarUsuarios, darDeBajaUsuario, actualizarUsuario } from '../../services/usuario.service';
 import { listarComplejos } from '../../services/complejo.service';
 import { NOMBRE_ROL, ROLES } from '../../utils/roles';
-import styles from './Usuarios.module.css';
+import styles from './Gestion.module.css';
 
-const POR_PAGINA = 10;
+// Fuera del componente: así es siempre la misma función y el hook no vuelve a pedir de más
+const listarPorApellido = (parametros) => listarUsuarios({ ...parametros, sortBy: 'apellido' });
 
 function Usuarios() {
     const { usuario: usuarioActual } = useAuth();
-
-    // Lo que el usuario está escribiendo en el buscador
-    const [busqueda, setBusqueda] = useState('');
-    // Los filtros que realmente se mandan al back
-    const [filtros, setFiltros] = useState({ nombre: '', rol: '', estado: '' });
-    const [pagina, setPagina] = useState(1);
-    // Se incrementa para volver a pedir la misma página después de guardar
-    const [recarga, setRecarga] = useState(0);
+    const listado = useListado(listarPorApellido, { filtrosIniciales: { rol: '', estado: '' } });
 
     // Modal de alta o edición: usuario null significa "nuevo"
     const [modal, setModal] = useState({ abierto: false, usuario: null });
@@ -32,47 +27,6 @@ function Usuarios() {
     // Temporizador que borra el aviso: se guarda para poder reiniciarlo
     const temporizadorAviso = useRef(null);
     const [complejos, setComplejos] = useState([]);
-    // La última respuesta del back, junto con la consulta que la pidió
-    const [respuesta, setRespuesta] = useState({
-        consulta: null,
-        data: [],
-        total: 0,
-        totalPages: 0,
-        error: '',
-    });
-
-    // Identifica la consulta actual: si cambia un filtro o la página, es otra consulta
-    const consulta = JSON.stringify({ ...filtros, pagina, recarga });
-    // Está cargando mientras la respuesta que tenemos sea de una consulta anterior
-    const cargando = respuesta.consulta !== consulta;
-
-    // Busca 400 ms después de la última tecla, no en cada una
-    useEffect(() => {
-        const espera = setTimeout(() => {
-            setFiltros((previos) => ({ ...previos, nombre: busqueda.trim() }));
-            setPagina(1);
-        }, 400);
-        return () => clearTimeout(espera);
-    }, [busqueda]);
-
-    // Pide la página cada vez que cambia la consulta
-    useEffect(() => {
-        let vigente = true;
-        const { nombre, rol, estado, pagina: page } = JSON.parse(consulta);
-
-        listarUsuarios({ nombre, rol, estado, page, limit: POR_PAGINA, sortBy: 'apellido' })
-            .then((datos) => {
-                if (vigente) setRespuesta({ consulta, ...datos, error: '' });
-            })
-            .catch((e) => {
-                if (vigente) setRespuesta((previa) => ({ ...previa, consulta, error: e.message }));
-            });
-
-        // Si llega otra consulta antes de que responda esta, esta respuesta se descarta
-        return () => {
-            vigente = false;
-        };
-    }, [consulta]);
 
     // Los complejos activos, para el selector del formulario. Se piden una sola vez
     useEffect(() => {
@@ -81,14 +35,6 @@ function Usuarios() {
             .catch(() => setComplejos([]));
     }, []);
 
-    function abrirAlta() {
-        setModal({ abierto: true, usuario: null });
-    }
-
-    function abrirEdicion(usuario) {
-        setModal({ abierto: true, usuario });
-    }
-
     function cerrarModal() {
         setModal({ abierto: false, usuario: null });
     }
@@ -96,7 +42,7 @@ function Usuarios() {
     function alGuardar(mensaje) {
         cerrarModal();
         setAConfirmar(null);
-        setRecarga((valor) => valor + 1);
+        listado.recargar();
         mostrarAviso(mensaje);
     }
 
@@ -107,15 +53,7 @@ function Usuarios() {
         temporizadorAviso.current = setTimeout(() => setAviso(''), 4000);
     }
 
-    function cambiarFiltro(evento) {
-        const { name, value } = evento.target;
-        setFiltros((previos) => ({ ...previos, [name]: value }));
-        setPagina(1);
-    }
-
-    const { data: usuarios, total, totalPages, error } = respuesta;
-    const desde = total === 0 ? 0 : (pagina - 1) * POR_PAGINA + 1;
-    const hasta = Math.min(pagina * POR_PAGINA, total);
+    const { items: usuarios, cargando, error, pagina, totalPages, total, desde, hasta } = listado;
 
     return (
         <section className={styles.pagina}>
@@ -126,7 +64,7 @@ function Usuarios() {
                         Gestioná las cuentas de jugadores, encargados y administradores.
                     </p>
                 </div>
-                <Button iconoIzquierda={<Plus size={20} />} onClick={abrirAlta}>
+                <Button iconoIzquierda={<Plus size={20} />} onClick={() => setModal({ abierto: true, usuario: null })}>
                     Nuevo usuario
                 </Button>
             </header>
@@ -144,13 +82,13 @@ function Usuarios() {
                     icono={<Search size={20} />}
                     type="search"
                     placeholder="Nombre o apellido"
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
+                    value={listado.busqueda}
+                    onChange={(e) => listado.setBusqueda(e.target.value)}
                 />
 
                 <label className={styles.campo}>
                     <span className={styles.etiqueta}>Rol</span>
-                    <select name="rol" value={filtros.rol} onChange={cambiarFiltro} className={styles.select}>
+                    <select name="rol" value={listado.filtros.rol} onChange={listado.cambiarFiltro} className={styles.select}>
                         <option value="">Todos</option>
                         {ROLES.map((rol) => (
                             <option key={rol} value={rol}>{NOMBRE_ROL[rol]}</option>
@@ -160,7 +98,7 @@ function Usuarios() {
 
                 <label className={styles.campo}>
                     <span className={styles.etiqueta}>Estado</span>
-                    <select name="estado" value={filtros.estado} onChange={cambiarFiltro} className={styles.select}>
+                    <select name="estado" value={listado.filtros.estado} onChange={listado.cambiarFiltro} className={styles.select}>
                         <option value="">Todos</option>
                         <option value="ACTIVO">Activos</option>
                         <option value="INACTIVO">Inactivos</option>
@@ -194,7 +132,7 @@ function Usuarios() {
                                     <span className={styles.nombre}>
                                         {usuario.apellido}, {usuario.nombre}
                                     </span>
-                                    <span className={styles.email}>{usuario.email}</span>
+                                    <span className={styles.secundario}>{usuario.email}</span>
                                 </td>
                                 <td>{NOMBRE_ROL[usuario.rol]}</td>
                                 <td>{usuario.Complejo?.nombre ?? '—'}</td>
@@ -203,12 +141,12 @@ function Usuarios() {
                                         {usuario.estado === 'ACTIVO' ? 'Activo' : 'Inactivo'}
                                     </span>
                                 </td>
-                                                                <td className={styles.celdaAcciones}>
+                                <td className={styles.celdaAcciones}>
                                     <div className={styles.grupoAcciones}>
                                         <button
                                             type="button"
                                             className={styles.accion}
-                                            onClick={() => abrirEdicion(usuario)}
+                                            onClick={() => setModal({ abierto: true, usuario })}
                                             aria-label={`Editar a ${usuario.nombre} ${usuario.apellido}`}
                                             title="Editar"
                                         >
@@ -265,7 +203,7 @@ function Usuarios() {
                         variante="secundario"
                         iconoIzquierda={<ChevronLeft size={18} />}
                         disabled={pagina <= 1 || cargando}
-                        onClick={() => setPagina(pagina - 1)}
+                        onClick={() => listado.setPagina(pagina - 1)}
                     >
                         Anterior
                     </Button>
@@ -273,7 +211,7 @@ function Usuarios() {
                         variante="secundario"
                         iconoDerecha={<ChevronRight size={18} />}
                         disabled={pagina >= totalPages || cargando}
-                        onClick={() => setPagina(pagina + 1)}
+                        onClick={() => listado.setPagina(pagina + 1)}
                     >
                         Siguiente
                     </Button>
@@ -293,7 +231,7 @@ function Usuarios() {
                     onCancelar={cerrarModal}
                 />
             </Modal>
-            
+
             <Modal
                 abierto={aConfirmar !== null}
                 titulo={aConfirmar?.estado === 'ACTIVO' ? '¿Dar de baja este usuario?' : '¿Reactivar este usuario?'}
@@ -301,7 +239,12 @@ function Usuarios() {
             >
                 {aConfirmar && (
                     <ConfirmarCambioEstado
-                        usuario={aConfirmar}
+                        nombre={`${aConfirmar.nombre} ${aConfirmar.apellido}`}
+                        activo={aConfirmar.estado === 'ACTIVO'}
+                        consecuenciaBaja="no va a poder iniciar sesión. Sus reservas y su historial se conservan, y la cuenta se puede reactivar cuando quieras."
+                        consecuenciaReactivacion="va a poder volver a iniciar sesión con su contraseña de siempre."
+                        darDeBaja={() => darDeBajaUsuario(aConfirmar.id)}
+                        reactivar={() => actualizarUsuario(aConfirmar.id, { estado: 'ACTIVO' })}
                         onConfirmado={alGuardar}
                         onCancelar={() => setAConfirmar(null)}
                     />
