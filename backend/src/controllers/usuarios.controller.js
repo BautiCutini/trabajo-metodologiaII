@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, fn, col, where: condicion } = require('sequelize');
 const { Usuario, Complejo } = require('../models');
 const usuarioPublico = require('../utils/usuarioPublico');
 
@@ -12,6 +12,13 @@ const CAMPOS_EDITABLES = ['nombre', 'apellido', 'email', 'password', 'telefono',
 function esEmailValido(email) {
     return typeof email === 'string' &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+// Arma la condición SQL: unaccent(columna) ILIKE unaccent('%texto%')
+function contieneSinAcentos(columna, texto) {
+    return condicion(fn('unaccent', col(columna)), {
+        [Op.iLike]: fn('unaccent', `%${texto}%`)
+    });
 }
 
 // aca me aseguro que el valor sea un string y que no sea vacio.
@@ -56,10 +63,11 @@ async function listar(req, res) {
         const where = {};
         
         // "nombre" busca tanto en el nombre como en el apellido
+        // Sin distinguir mayúsculas ni acentos: "maria" encuentra a "María"
         if (nombre) {
             where[Op.or] = [
-                { nombre: { [Op.iLike]: `%${nombre}%` } },
-                { apellido: { [Op.iLike]: `%${nombre}%` } }
+                contieneSinAcentos('Usuario.nombre', nombre),
+                contieneSinAcentos('Usuario.apellido', nombre)
             ];
         }
         if (email) {
@@ -92,6 +100,8 @@ async function listar(req, res) {
         
         const { rows, count } = await Usuario.findAndCountAll({
             where,
+            // Trae el nombre del complejo para mostrarlo en el listado
+            include: [{ model: Complejo, attributes: ['id', 'nombre'] }],
             order: [[sortBy, order]],
             limit,
             offset
