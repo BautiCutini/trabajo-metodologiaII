@@ -192,3 +192,14 @@
     display: flex;
     gap: var(--spacing-sm);
 }
+
+.accionPeligro:hover {
+    background-color: rgba(220, 69, 69, 0.15);
+    color: var(--color-danger-text);
+}
+
+.grupoAcciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-xs);
+}

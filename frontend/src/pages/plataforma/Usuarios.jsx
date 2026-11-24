@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Search, ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Plus, Pencil } from 'lucide-react';
+import { useEffect, useRef , useState } from 'react';
+import { Search, UserX , UserCheck , ChevronLeft, ChevronRight, AlertCircle, CheckCircle2, Plus, Pencil } from 'lucide-react';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import FormularioUsuario from './FormularioUsuario';
+import ConfirmarCambioEstado from './ConfirmarCambioEstado';
 import { useAuth } from '../../context/AuthContext';
 import { listarUsuarios } from '../../services/usuario.service';
 import { listarComplejos } from '../../services/complejo.service';
@@ -25,7 +26,11 @@ function Usuarios() {
 
     // Modal de alta o edición: usuario null significa "nuevo"
     const [modal, setModal] = useState({ abierto: false, usuario: null });
+    // Usuario al que se le va a dar de baja o reactivar (null = sin confirmación abierta)
+    const [aConfirmar, setAConfirmar] = useState(null);
     const [aviso, setAviso] = useState('');
+    // Temporizador que borra el aviso: se guarda para poder reiniciarlo
+    const temporizadorAviso = useRef(null);
     const [complejos, setComplejos] = useState([]);
     // La última respuesta del back, junto con la consulta que la pidió
     const [respuesta, setRespuesta] = useState({
@@ -90,9 +95,16 @@ function Usuarios() {
 
     function alGuardar(mensaje) {
         cerrarModal();
+        setAConfirmar(null);
         setRecarga((valor) => valor + 1);
+        mostrarAviso(mensaje);
+    }
+
+    // Si llega un aviso nuevo antes de que se borre el anterior, se reinicia la cuenta
+    function mostrarAviso(mensaje) {
+        clearTimeout(temporizadorAviso.current);
         setAviso(mensaje);
-        setTimeout(() => setAviso(''), 4000);
+        temporizadorAviso.current = setTimeout(() => setAviso(''), 4000);
     }
 
     function cambiarFiltro(evento) {
@@ -191,15 +203,43 @@ function Usuarios() {
                                         {usuario.estado === 'ACTIVO' ? 'Activo' : 'Inactivo'}
                                     </span>
                                 </td>
-                                <td className={styles.celdaAcciones}>
-                                    <button
-                                        type="button"
-                                        className={styles.accion}
-                                        onClick={() => abrirEdicion(usuario)}
-                                        aria-label={`Editar a ${usuario.nombre} ${usuario.apellido}`}
-                                    >
-                                        <Pencil size={18} />
-                                    </button>
+                                                                <td className={styles.celdaAcciones}>
+                                    <div className={styles.grupoAcciones}>
+                                        <button
+                                            type="button"
+                                            className={styles.accion}
+                                            onClick={() => abrirEdicion(usuario)}
+                                            aria-label={`Editar a ${usuario.nombre} ${usuario.apellido}`}
+                                            title="Editar"
+                                        >
+                                            <Pencil size={18} />
+                                        </button>
+
+                                        {/* Nadie puede darse de baja a sí mismo: el back lo rechaza */}
+                                        {usuario.id !== usuarioActual.id && (
+                                            usuario.estado === 'ACTIVO' ? (
+                                                <button
+                                                    type="button"
+                                                    className={`${styles.accion} ${styles.accionPeligro}`}
+                                                    onClick={() => setAConfirmar(usuario)}
+                                                    aria-label={`Dar de baja a ${usuario.nombre} ${usuario.apellido}`}
+                                                    title="Dar de baja"
+                                                >
+                                                    <UserX size={18} />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className={styles.accion}
+                                                    onClick={() => setAConfirmar(usuario)}
+                                                    aria-label={`Reactivar a ${usuario.nombre} ${usuario.apellido}`}
+                                                    title="Reactivar"
+                                                >
+                                                    <UserCheck size={18} />
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -252,6 +292,20 @@ function Usuarios() {
                     onGuardado={alGuardar}
                     onCancelar={cerrarModal}
                 />
+            </Modal>
+            
+            <Modal
+                abierto={aConfirmar !== null}
+                titulo={aConfirmar?.estado === 'ACTIVO' ? '¿Dar de baja este usuario?' : '¿Reactivar este usuario?'}
+                onCerrar={() => setAConfirmar(null)}
+            >
+                {aConfirmar && (
+                    <ConfirmarCambioEstado
+                        usuario={aConfirmar}
+                        onConfirmado={alGuardar}
+                        onCancelar={() => setAConfirmar(null)}
+                    />
+                )}
             </Modal>
         </section>
     );
