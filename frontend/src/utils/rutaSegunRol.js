@@ -1,9 +1,8 @@
-// Por ahora todos van al inicio. Cuando existan los paneles:
-// ENCARGADO y ADMIN_COMPLEJO → '/admin', ADMIN_PLATAFORMA → '/plataforma'.
+// Cada rol arranca en su propio panel.
 const RUTA_INICIAL = {
     JUGADOR: '/',
-    ENCARGADO: '/',
-    ADMIN_COMPLEJO: '/',
+    ENCARGADO: '/admin',
+    ADMIN_COMPLEJO: '/admin',
     ADMIN_PLATAFORMA: '/',
 };
 

@@ -19,7 +19,6 @@ async function registro(req, res) {
             return res.status(409).json({ error: 'Ya existe una cuenta con ese email' });
         }
 
-        // El registro público SIEMPRE crea jugadores, venga lo que venga en el body.
         const usuario = await Usuario.create({
             nombre,
             apellido,

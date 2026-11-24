@@ -1,7 +1,10 @@
 require('dotenv').config();
 
 const app = require('./app');
-const { sequelize } = require('./models');
+
+const {sequelize} = require ('./models');
+
+
 
 async function iniciarServidor() {
     try {

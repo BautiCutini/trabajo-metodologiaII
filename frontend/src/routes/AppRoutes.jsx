@@ -6,6 +6,7 @@ import Registro from '../pages/auth/Registro';
 import Perfil from '../pages/jugador/Perfil';
 import Mapa from '../pages/jugador/Mapa'; 
 import Reservas from '../pages/jugador/Reservas';
+import Dashboard from '../pages/admin/Dashboard';
 
 function AppRoutes() {
     return (
@@ -23,6 +24,11 @@ function AppRoutes() {
             <Route element={<RutaProtegida />}>
                 <Route path="/" element={<Inicio />} />
                 <Route path="/mapa" element={<Mapa />} />
+            </Route>
+
+                        {/* Panel del complejo: empleado (ENCARGADO) y administrador */}
+            <Route element={<RutaProtegida roles={['ENCARGADO', 'ADMIN_COMPLEJO']} />}>
+                <Route path="/admin" element={<Dashboard />} />
             </Route>
 
             {/* Cuando existan los paneles, se agregan así:
