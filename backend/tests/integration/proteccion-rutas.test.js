@@ -68,5 +68,19 @@ describe('Protección de /api/v1/usuarios', () => {
         const respuesta = await request(app).get('/api/v1/no-existe');
 
         expect(respuesta.status).toBe(404);
+
+            test('sin token, confirmar una reserva responde 401', async () => {
+        const respuesta = await request(app).patch('/api/v1/reservas/1/confirmar');
+
+        expect(respuesta.status).toBe(401);
+    });
+
+    test('un JUGADOR no puede confirmar reservas: 403', async () => {
+        const respuesta = await request(app)
+            .patch('/api/v1/reservas/1/confirmar')
+            .set('Authorization', `Bearer ${tokenDe('JUGADOR')}`);
+
+        expect(respuesta.status).toBe(403);
+    });
     });
 });

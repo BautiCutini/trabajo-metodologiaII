@@ -13,7 +13,7 @@ const OPCIONES = [
 ];
 
 const ETIQUETA_ROL = {
-    [ENCARGADO]: 'Empleado',
+    [ENCARGADO]: 'Encargado',
     [ADMIN]: 'Administrador',
 };
 

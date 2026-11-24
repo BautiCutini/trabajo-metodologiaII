@@ -457,6 +457,74 @@ async function cancelar(req, res) {
     }
 }
 
+
+async function confirmar(req, res) {
+    try {
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({
+                error: 'El id debe ser un entero positivo'
+            });
+        }
+
+        const reserva = await Reserva.findByPk(id, {
+            include: [{ model: Cancha }]
+        });
+
+        if (!reserva) {
+            return res.status(404).json({
+                error: 'Reserva no encontrada'
+            });
+        }
+
+        const { rol, complejo_id } = req.usuario;
+
+        if (
+            ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol) &&
+            Number(reserva.Cancha.complejo_id) !== Number(complejo_id)
+        ) {
+            return res.status(403).json({
+                error: 'No tenés permiso para confirmar reservas de otro complejo'
+            });
+        }
+
+        if (reserva.estado === 'CANCELADA') {
+            return res.status(400).json({
+                error: 'No se puede confirmar una reserva cancelada'
+            });
+        }
+
+        if (reserva.estado === 'CONFIRMADA') {
+            return res.status(400).json({
+                error: 'La reserva ya está confirmada'
+            });
+        }
+
+        await reserva.update({
+            estado: 'CONFIRMADA'
+        });
+
+        return res.json({
+            mensaje: 'Reserva confirmada correctamente',
+            reserva
+        });
+
+    } catch (error) {
+        console.error('Error al confirmar la reserva:', error);
+
+        return res.status(500).json({
+            error: 'Error interno del servidor'
+        });
+    }
+}
+
+
+
+
+
+
+
 async function disponibilidad(req, res) {
     try {
         const canchaId = Number(req.query.cancha_id);
@@ -567,4 +635,4 @@ async function disponibilidad(req, res) {
     }
 }
 
-module.exports = { listar, obtener, crear, cancelar, disponibilidad };
+module.exports = { listar, obtener, crear, cancelar, confirmar, disponibilidad };
