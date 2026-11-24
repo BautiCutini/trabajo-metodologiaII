@@ -1,6 +1,7 @@
-const { Op, fn, col, where: condicion } = require('sequelize');
+const { Op } = require('sequelize');
 const { Usuario, Complejo } = require('../models');
 const usuarioPublico = require('../utils/usuarioPublico');
+const { contieneSinAcentos } = require('../utils/busqueda');
 
 const ROLES = ['JUGADOR', 'ENCARGADO', 'ADMIN_COMPLEJO', 'ADMIN_PLATAFORMA'];
 const ESTADOS = ['ACTIVO', 'INACTIVO'];
@@ -14,12 +15,6 @@ function esEmailValido(email) {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-// Arma la condición SQL: unaccent(columna) ILIKE unaccent('%texto%')
-function contieneSinAcentos(columna, texto) {
-    return condicion(fn('unaccent', col(columna)), {
-        [Op.iLike]: fn('unaccent', `%${texto}%`)
-    });
-}
 
 // aca me aseguro que el valor sea un string y que no sea vacio.
 function esTextoValido(valor) {
