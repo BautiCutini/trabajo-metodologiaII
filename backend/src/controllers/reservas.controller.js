@@ -121,7 +121,7 @@ async function listar(req, res) {
         const { rows, count } = await Reserva.findAndCountAll({
             where,
             include: [
-                { model: Usuario },
+                { model: Usuario, attributes: ['id', 'nombre', 'apellido', 'telefono'] },
                 {
                     model: Cancha,
                     where: ['ENCARGADO', 'ADMIN_COMPLEJO'].includes(rol)
@@ -173,7 +173,7 @@ async function obtener(req, res) {
         const reserva = await Reserva.findOne({
             where,
             include: [
-                { model: Usuario },
+                { model: Usuario, attributes: ['id', 'nombre', 'apellido', 'telefono'] },
                 {
                     model: Cancha,
                     where: esPersonalComplejo
@@ -457,7 +457,6 @@ async function cancelar(req, res) {
     }
 }
 
-
 async function confirmar(req, res) {
     try {
         const id = Number(req.params.id);
@@ -518,12 +517,6 @@ async function confirmar(req, res) {
         });
     }
 }
-
-
-
-
-
-
 
 async function disponibilidad(req, res) {
     try {

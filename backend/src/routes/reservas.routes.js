@@ -5,6 +5,7 @@ const {
     obtener,
     crear,
     cancelar,
+    confirmar,
     disponibilidad
 } = require('../controllers/reservas.controller');
 
@@ -45,8 +46,8 @@ router.get(
 
 
 router.post(
-    '/', 
-    autenticar, 
+    '/',
+    autenticar,
     autorizar('JUGADOR', 'ENCARGADO'),
     crear
 );
@@ -57,6 +58,14 @@ router.patch(
     autenticar,
     autorizar(...ROLES_CANCELAR),
     cancelar
+);
+
+
+router.patch(
+    '/:id/confirmar',
+    autenticar,
+    autorizar('ENCARGADO', 'ADMIN_COMPLEJO', 'ADMIN_PLATAFORMA'),
+    confirmar
 );
 
 
