@@ -20,3 +20,175 @@
 .subtitulo {
     color: var(--color-text-muted);
 }
+
+/* ===== Filtros ===== */
+
+.filtros {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .filtros {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+        align-items: end;
+    }
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Mismo aspecto que el componente Input */
+.etiqueta {
+    color: var(--color-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-semibold);
+}
+
+.select {
+    min-height: 48px;
+    padding: 0 var(--spacing-md);
+    background-color: rgba(11, 23, 18, 0.55);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-input);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.select:focus-visible {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: var(--glow-lime);
+}
+
+/* Las opciones del desplegable las dibuja el sistema: fondo oscuro para que se lean */
+.select option {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+.alerta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: rgba(220, 69, 69, 0.12);
+    border: var(--border-width) solid var(--color-danger);
+    border-radius: var(--radius-input);
+    color: var(--color-danger-text);
+    font-size: var(--font-size-sm);
+}
+
+/* ===== Tabla ===== */
+
+/* En pantallas chicas la tabla se desliza de costado en vez de romper la página */
+.tablaContenedor {
+    overflow-x: auto;
+    background-color: var(--color-surface-glass);
+    border: var(--border-width) solid var(--color-border-subtle);
+    border-radius: var(--radius-card);
+}
+
+.tabla {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+}
+
+.tabla th {
+    padding: var(--spacing-md);
+    border-bottom: var(--border-width) solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-semibold);
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.tabla td {
+    padding: var(--spacing-md);
+    border-bottom: var(--border-width) solid var(--color-border-subtle);
+    vertical-align: middle;
+}
+
+.tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla tbody tr:hover {
+    background-color: var(--color-hover);
+}
+
+.cargando {
+    opacity: 0.5;
+}
+
+.nombre {
+    display: block;
+    font-weight: var(--font-semibold);
+}
+
+.email {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.activo,
+.inactivo {
+    display: inline-block;
+    padding: 2px var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-semibold);
+}
+
+.activo {
+    background-color: rgba(185, 231, 105, 0.15);
+    color: var(--color-secondary);
+}
+
+.inactivo {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--color-text-muted);
+}
+
+.vacio {
+    padding: var(--spacing-xl) var(--spacing-md);
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+/* Visible solo para lectores de pantalla */
+.oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ===== Paginación ===== */
+
+.paginacion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.conteo {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.botones {
+    display: flex;
+    gap: var(--spacing-sm);
+}
