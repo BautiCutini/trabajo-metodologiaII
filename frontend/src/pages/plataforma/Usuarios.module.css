@@ -1,0 +1,22 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.encabezado {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* Color explícito porque App.css pinta los títulos de verde oscuro */
+.titulo {
+    color: var(--color-text);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-bold);
+}
+
+.subtitulo {
+    color: var(--color-text-muted);
+}
