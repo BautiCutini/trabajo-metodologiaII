@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const empleadosRoutes = require('./routes/empleados.routes');
 const authRoutes = require('./routes/auth.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
 const complejosRoutes = require('./routes/complejos.routes');
@@ -24,5 +25,6 @@ app.use('/api/v1/canchas', canchasRoutes);
 app.use('/api/v1/horarios', horariosRoutes);
 app.use('/api/v1/pagos', pagosRoutes);
 app.use('/api/v1/reservas', reservasRoutes);
+app.use('/api/v1/empleados', empleadosRoutes);
 
 module.exports = app;
