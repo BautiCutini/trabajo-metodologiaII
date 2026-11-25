@@ -43,7 +43,10 @@ function Login() {
 
     
     if (usuario) {
-        const destino = ubicacion.state?.desde ?? rutaSegunRol(usuario.rol);
+        // Si venía de una página concreta, vuelve ahí.
+        // Si venía de la raíz (la puerta de entrada), va al inicio de su rol.
+        const desde = ubicacion.state?.desde;
+        const destino = desde && desde !== '/' ? desde : rutaSegunRol(usuario.rol);
         return <Navigate to={destino} replace />;
     }
 

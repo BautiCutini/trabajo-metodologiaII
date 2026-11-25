@@ -1,0 +1,54 @@
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+}
+
+.etiqueta {
+    color: var(--color-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-semibold);
+}
+
+.select {
+    min-height: 48px;
+    padding: 0 var(--spacing-md);
+    background-color: rgba(11, 23, 18, 0.55);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-input);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+.select:focus-visible {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: var(--glow-lime);
+}
+
+.select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Las opciones las dibuja el sistema: fondo oscuro para que se lean */
+.select option {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+.conError,
+.conError:focus-visible {
+    border-color: var(--color-danger);
+}
+
+.error {
+    color: var(--color-danger-text);
+    font-size: var(--font-size-xs);
+}
+
+.ayuda {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-xs);
+}
