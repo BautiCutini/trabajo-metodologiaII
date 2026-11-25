@@ -1,27 +1,26 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Users, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './LayoutAdmin.css';
 
 const ENCARGADO = 'ENCARGADO';
 const ADMIN = 'ADMIN_COMPLEJO';
 
-// Cada opción dice qué roles la ven. Más adelante se suman acá:
-// Reservas, Canchas y Horarios.
 const OPCIONES = [
     { nombre: 'Inicio', Icono: LayoutDashboard, ruta: '/admin', roles: [ENCARGADO, ADMIN], fin: true },
+    { nombre: 'Horarios', Icono: CalendarDays, ruta: '/admin/horarios', roles: [ENCARGADO, ADMIN] },
+    { nombre: 'Gerentes', Icono: Users, ruta: '/admin/empleados', roles: [ADMIN] },
 ];
 
 const ETIQUETA_ROL = {
-    [ENCARGADO]: 'Encargado',
-    [ADMIN]: 'Administrador',
+    [ENCARGADO]: 'Gerente',
+    [ADMIN]: 'Dueño del complejo',
 };
 
 function LayoutAdmin({ titulo, subtitulo, children }) {
     const { usuario, cerrarSesion } = useAuth();
     const navigate = useNavigate();
-
-    const opciones = OPCIONES.filter((o) => o.roles.includes(usuario.rol));
+    const opciones = OPCIONES.filter((opcion) => opcion.roles.includes(usuario.rol));
 
     function salir() {
         cerrarSesion();
@@ -32,8 +31,7 @@ function LayoutAdmin({ titulo, subtitulo, children }) {
         <div className="panel">
             <aside className="panel__lateral">
                 <img className="panel__logo" src="/images/logo-picado.png" alt="Picado" />
-
-                <nav className="panel__nav">
+                <nav className="panel__nav" aria-label="Menú principal">
                     {opciones.map(({ nombre, Icono, ruta, fin }) => (
                         <NavLink
                             key={ruta}
@@ -41,16 +39,15 @@ function LayoutAdmin({ titulo, subtitulo, children }) {
                             end={fin}
                             className={({ isActive }) => `panel__link ${isActive ? 'activo' : ''}`}
                         >
-                            <Icono size={20} />
+                            <Icono size={20} aria-hidden="true" />
                             <span>{nombre}</span>
                         </NavLink>
                     ))}
                 </nav>
-
                 <div className="panel__usuario">
                     <div>
                         <strong>{usuario.nombre} {usuario.apellido}</strong>
-                        <small>{ETIQUETA_ROL[usuario.rol]}</small>
+                        <small>{ETIQUETA_ROL[usuario.rol] ?? usuario.rol}</small>
                     </div>
                     <button type="button" onClick={salir} aria-label="Cerrar sesión">
                         <LogOut size={20} />
@@ -63,12 +60,10 @@ function LayoutAdmin({ titulo, subtitulo, children }) {
                     <h1>{titulo}</h1>
                     {subtitulo && <p>{subtitulo}</p>}
                 </header>
-
                 {children}
             </main>
 
-            {/* En el celular el menú pasa abajo */}
-            <nav className="panel__inferior">
+            <nav className="panel__inferior" aria-label="Navegación móvil">
                 {opciones.map(({ nombre, Icono, ruta, fin }) => (
                     <NavLink
                         key={ruta}
