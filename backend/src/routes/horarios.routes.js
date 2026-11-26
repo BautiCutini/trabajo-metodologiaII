@@ -7,13 +7,19 @@ const { complejoDeLaCanchaDelBody, complejoDelHorario } = require('../utils/reso
 
 const router = Router();
 
-const ADMINS = ['ADMIN_PLATAFORMA', 'ADMIN_COMPLEJO'];
+const ADMINISTRADORES = ['ADMIN_PLATAFORMA', 'ADMIN_COMPLEJO'];
+const PERSONAL_COMPLEJO = ['ADMIN_PLATAFORMA', 'ADMIN_COMPLEJO', 'ENCARGADO'];
 
+// La consulta de horarios activos es pública para el flujo de reservas.
 router.get('/', listar);
 router.get('/:id', obtener);
-router.post('/generar', autenticar, autorizar(...ADMINS), verificarPertenencia(complejoDeLaCanchaDelBody), generar);
-router.post('/', autenticar, autorizar(...ADMINS), verificarPertenencia(complejoDeLaCanchaDelBody), crear);
-router.patch('/:id', autenticar, autorizar(...ADMINS), verificarPertenencia(complejoDelHorario), actualizar);
-router.delete('/:id', autenticar, autorizar(...ADMINS), verificarPertenencia(complejoDelHorario), eliminar);
+
+// Solo el administrador del complejo o de la plataforma puede crear horarios.
+router.post('/generar', autenticar, autorizar(...ADMINISTRADORES), verificarPertenencia(complejoDeLaCanchaDelBody), generar);
+router.post('/', autenticar, autorizar(...ADMINISTRADORES), verificarPertenencia(complejoDeLaCanchaDelBody), crear);
+
+// Tanto el dueño como el gerente pueden modificar o dar de baja horarios de su complejo.
+router.patch('/:id', autenticar, autorizar(...PERSONAL_COMPLEJO), verificarPertenencia(complejoDelHorario), actualizar);
+router.delete('/:id', autenticar, autorizar(...PERSONAL_COMPLEJO), verificarPertenencia(complejoDelHorario), eliminar);
 
 module.exports = router;
