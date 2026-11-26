@@ -19,7 +19,7 @@ function Inicio() {
                 <main className="inicio">
                     <header className="inicio__header">
                         <div>
-                            <h1>Hola, Jugador 👋</h1>
+                            <h1>Hola, {usuario?.nombre || 'Jugador'} 👋</h1>
                             <p>¿Listo para jugar?</p>
                         </div>
                     
