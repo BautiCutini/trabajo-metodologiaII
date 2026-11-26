@@ -25,12 +25,16 @@ export function AuthProvider({ children }) {
         return usuario;
     }
 
+        function actualizarUsuario(datos) {
+        setUsuario(datos);
+    }
+
     function cerrarSesion() {
         borrarToken();
         setUsuario(null);
     }
 
-    const valor = { usuario, verificando, iniciarSesion, cerrarSesion };
+    const valor = { usuario, verificando, iniciarSesion, cerrarSesion, actualizarUsuario };
 
     return <AuthContext.Provider value={valor}>{children}</AuthContext.Provider>;
 }

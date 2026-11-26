@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
     House,
     CalendarDays,
@@ -10,6 +11,14 @@ import {
 } from 'lucide-react';
 
 function Sidebar() {
+    const { cerrarSesion } = useAuth();
+    const navigate = useNavigate();
+
+    function salir() {
+        cerrarSesion();
+        navigate('/login', { replace: true });
+    }
+
     const opciones = [
         { nombre: 'Inicio', Icono: House, ruta: '/' },
         { nombre: 'Reservar cancha', Icono: CalendarDays, ruta: '/reservar' },
@@ -17,13 +26,13 @@ function Sidebar() {
         { nombre: 'Favoritos', Icono: Heart, ruta: '/favoritos' },
         { nombre: 'Mi perfil', Icono: UserRound, ruta: '/perfil' },
     ];
-    
+
     return (
         <aside className="sidebar">
             <div className="sidebar__logo">
                 <img src="/images/logo-picado.png" alt="Picado" />
             </div>
-            
+
             <nav className="sidebar__nav">
                 {opciones.map(({ nombre, Icono, ruta }) => (
                     <NavLink
@@ -38,14 +47,14 @@ function Sidebar() {
                     </NavLink>
                 ))}
             </nav>
-            
+
             <div className="sidebar__inferior">
                 <button className="sidebar__link" type="button">
                     <Settings className="sidebar__icono" size={20} />
                     Configuración
                 </button>
-                
-                <button className="sidebar__link" type="button">
+
+                <button className="sidebar__link" type="button" onClick={salir}>
                     <LogOut className="sidebar__icono" size={20} />
                     Cerrar sesión
                 </button>
