@@ -29,10 +29,9 @@ function Sidebar() {
 
     return (
         <aside className="sidebar">
-            <div className="sidebar__logo">
+            <NavLink to="/" className="sidebar__logo">
                 <img src="/images/logo-picado.png" alt="Picado" />
-            </div>
-
+            </NavLink>
             <nav className="sidebar__nav">
                 {opciones.map(({ nombre, Icono, ruta }) => (
                     <NavLink
